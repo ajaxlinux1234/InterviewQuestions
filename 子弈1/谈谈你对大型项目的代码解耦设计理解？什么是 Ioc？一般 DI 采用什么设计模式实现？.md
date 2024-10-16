@@ -13,7 +13,8 @@ Inversion of Control 控制反转
 
 一个对象不直接创建对象, 而是通过第三方服务来传递其依赖项, 这就实现了控制反转, loc的核心是将“谁”控制“何时”请求依赖项的决定移交给框架或容器, 而不是由类自己控制, 在前端中实际应用如下
 
-```import { createApp } from 'vue';
+```javascript
+import { createApp } from 'vue';
 import { createStore } from 'vuex';
 import App from './App.vue';
 
@@ -35,7 +36,7 @@ app.mount('#app');
 在上述例子中, Vuex store就是一个依赖项, 通过app.use注入到vue应用中, 通过this.$store可以访问
 
 
-```
+```javascript
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -63,7 +64,7 @@ Dependency Inject 依赖注入
 
 app.use为什么说使用了依赖注入
 
-```
+```javascript
 // 插件定义
 const myPlugin = {
   install(app, options) {

@@ -27,7 +27,7 @@ Callback会造成回调地狱的问题, 还有难以测试的问题. ES6的Promi
 
 Promise 对象的执行状态不可变示例如下：
 
-```
+```javascript
 const promise = new Promise((resolve, reject) => {
   // 状态变更为 fulfilled 并返回结果 1 后不会再变更状态
   resolve(1);
@@ -51,7 +51,7 @@ promise
 
 Promise内部的执行不会影响到外部的代码的例子:
 
-```
+```javascript
 const promise = new Promise<string>((resolve, reject) => {
   // 下述是异常代码
   console.log(a.b.c);
@@ -87,7 +87,7 @@ Promise相对于Callback进行异步处理更加强大, 但是也有一些缺点
 ## Generator
 Promise解决了Callback回调地狱的问题, 但也照成了代码冗余, 如果一些异步任务不支持Promise语法就要进行一层Promise封装.Generator函数将异步编程带到一个全新的阶段, 它使得异步代码执行起来像同步那么简单
 
-```
+```javascript
 const firstPromise = (result) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => resolve(result * 2), 1000);

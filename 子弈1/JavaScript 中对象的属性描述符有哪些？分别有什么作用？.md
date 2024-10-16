@@ -1,6 +1,6 @@
 # JavaScript 中对象的属性描述符有哪些？分别有什么作用？
 
-```
+```javascript
 let obj = {
   name: 'a',
   fullName: '',
