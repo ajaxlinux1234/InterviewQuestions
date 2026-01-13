@@ -20,6 +20,7 @@ import { Controller, Post, Body, Req, Headers, Get, UseGuards } from '@nestjs/co
 import { FastifyRequest } from 'fastify';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from '../dto/auth.dto';
+import { CacheConfig, CacheConfigs } from '../interceptors/cache.interceptor';
 // @ts-ignore
 import { AuthGuard } from './auth.guard';
 
@@ -57,6 +58,8 @@ export class AuthController {
    * - 自动解析请求体 JSON 数据
    * - 将数据映射到 RegisterDto 类型
    * - 提供类型安全和数据验证
+   * 
+   * 注意：POST 请求不使用缓存，因为每次注册都是新的操作
    */
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
@@ -72,6 +75,8 @@ export class AuthController {
    * - @Body() loginDto: 登录数据（用户名、密码）
    * - @Req() req: Fastify 请求对象，用于获取客户端信息
    * - @Headers('user-agent') userAgent: 客户端浏览器信息
+   * 
+   * 注意：POST 请求不使用缓存，因为每次登录都需要验证和生成新的令牌
    */
   @Post('login')
   async login(
@@ -81,7 +86,7 @@ export class AuthController {
   ) {
     // 获取客户端 IP 地址
     // 用于安全日志记录和异常登录检测
-    const ipAddress = req.ip || req.raw.connection.remoteAddress;
+    const ipAddress = req.ip || req.socket.remoteAddress;
     
     // 调用认证服务处理登录逻辑
     return await this.authService.login(loginDto, userAgent, ipAddress);
@@ -98,6 +103,8 @@ export class AuthController {
    * @Headers('authorization') 装饰器：
    * - 获取 Authorization 请求头
    * - 通常格式为 "Bearer <token>"
+   * 
+   * 注意：POST 请求不使用缓存，因为退出登录是状态改变操作
    */
   @Post('logout')
   @UseGuards(AuthGuard)
@@ -120,9 +127,15 @@ export class AuthController {
    * @Req() req: any：
    * - 请求对象，AuthGuard 会在其中注入用户信息
    * - req.user 包含当前登录用户的完整信息
+   * 
+   * @CacheConfig 装饰器配置缓存策略：
+   * - 使用 NO_CACHE 策略 - 不缓存策略
+   * - 用户信息是敏感数据，且可能频繁变化，不适合缓存
+   * - 每次请求都会返回最新的用户信息
    */
   @Get('profile')
   @UseGuards(AuthGuard)
+  @CacheConfig(CacheConfigs.NO_CACHE)
   async getProfile(@Req() req: any) {
     // AuthGuard 会将用户信息注入到 request 中
     // 这样控制器就可以直接获取当前登录用户的信息
@@ -149,6 +162,7 @@ export class AuthController {
  * 3. 数据验证：使用 DTO 进行数据类型检查
  * 4. 安全性：使用守卫保护敏感路由
  * 5. 错误处理：让 NestJS 的异常过滤器处理错误
+ * 6. 缓存策略：根据数据特性选择合适的缓存策略
  * 
  * HTTP 状态码：
  * - 200: 成功
@@ -156,4 +170,8 @@ export class AuthController {
  * - 401: 未授权（登录失败、令牌无效）
  * - 400: 请求参数错误
  * - 500: 服务器内部错误
+ * 
+ * 缓存策略说明：
+ * - GET /auth/profile: NO_CACHE - 用户信息敏感且可能变化，不缓存
+ * - POST 请求: 不使用缓存 - 状态改变操作不应缓存
  */

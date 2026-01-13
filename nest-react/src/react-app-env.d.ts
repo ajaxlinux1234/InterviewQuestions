@@ -1,6 +1,8 @@
 /// <reference types="react-scripts" />
 
 declare module 'react-hot-toast' {  
+  import * as React from 'react';
+  
   export interface ToastOptions {
     duration?: number;
     style?: React.CSSProperties;

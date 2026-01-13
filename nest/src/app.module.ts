@@ -5,7 +5,8 @@
  * 1. 配置数据库连接 (TypeORM + MySQL)
  * 2. 导入其他功能模块
  * 3. 注册控制器和服务提供者
- * 4. 管理应用的整体架构
+ * 4. 配置全局拦截器（如缓存拦截器）
+ * 5. 管理应用的整体架构
  * 
  * NestJS 核心概念：
  * - @Module(): 模块装饰器，定义模块的元数据
@@ -17,6 +18,7 @@
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { HomeController } from './controllers/home.controller';
 import { UserController, PushController } from './controllers/user.controller';
 import { DatabaseService } from './services/database.service';
@@ -24,6 +26,7 @@ import { RedisService } from './services/redis.service';
 import { AuthModule } from './auth/auth.module';
 import { User } from './entities/user.entity';
 import { UserToken } from './entities/user-token.entity';
+import { CacheInterceptor } from './interceptors/cache.interceptor';
 
 /**
  * 应用根模块
@@ -70,6 +73,13 @@ import { UserToken } from './entities/user-token.entity';
   providers: [
     DatabaseService,  // 数据库服务（原生 SQL 查询）
     RedisService,     // Redis 缓存服务
+    
+    // 全局缓存拦截器配置
+    // APP_INTERCEPTOR 是 NestJS 提供的特殊令牌，用于注册全局拦截器
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
   ],
 })
 export class AppModule {
@@ -81,5 +91,13 @@ export class AppModule {
    * 2. 依赖注入：自动管理服务之间的依赖关系
    * 3. 装饰器驱动：使用装饰器来定义模块、控制器、服务等
    * 4. 可扩展性：易于添加新功能和集成第三方库
+   * 5. 全局拦截器：统一处理横切关注点（如缓存、日志、异常处理）
+   * 
+   * 缓存拦截器说明：
+   * - 全局注册的 CacheInterceptor 会拦截所有 HTTP 请求
+   * - 根据控制器方法上的 @CacheConfig 装饰器配置缓存策略
+   * - 支持强缓存（Cache-Control）和协商缓存（ETag、Last-Modified）
+   * - 自动处理条件请求（If-None-Match、If-Modified-Since）
+   * - 提升 API 响应速度，减少服务器负载
    */
 }
