@@ -7,8 +7,9 @@ class UserController extends Controller {
     
     console.log('**用户请求 - HTTP/2.0 服务**', userId);
     
-    // 获取 HTTP 版本信息
+    // 获取 HTTP 版本信息 (支持自定义 HTTP/2 检测)
     const httpVersion = ctx.req.httpVersion || 'unknown';
+    const isHTTP2 = httpVersion === '2.0' || ctx.isHTTP2 || false;
     const protocol = ctx.protocol;
     
     ctx.body = {
@@ -19,13 +20,13 @@ class UserController extends Controller {
       protocol: {
         version: httpVersion,
         scheme: protocol,
-        encrypted: ctx.secure,
-        http2: httpVersion === '2.0'
+        encrypted: ctx.secure || protocol === 'https',
+        http2: isHTTP2
       },
       features: {
-        multiplexing: httpVersion === '2.0',
-        headerCompression: httpVersion === '2.0',
-        serverPush: httpVersion === '2.0'
+        multiplexing: isHTTP2,
+        headerCompression: isHTTP2,
+        serverPush: isHTTP2
       }
     };
   }

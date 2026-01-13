@@ -197,3 +197,128 @@
 2026-01-13 18:23:37,708 INFO 39333 [egg:core] dump config after ready, 4ms
 2026-01-13 18:24:04,652 INFO 39333 [egg-watcher] Received a change event from eventSource: {"event":"change","path":"/Users/wangchengkun/Documents/面试题/egg/config/config.default.js","stat":{"dev":16777233,"mode":33188,"nlink":1,"uid":501,"gid":20,"rdev":0,"blksize":4096,"ino":120065654,"size":1147,"blocks":8,"atimeMs":1768299844580.5942,"mtimeMs":1768299844554.9119,"ctimeMs":1768299844554.9119,"birthtimeMs":1768299211329.121},"remove":false,"isDirectory":false,"isFile":true}
 2026-01-13 18:24:04,862 WARN 39333 [agent:development] reload worker because /Users/wangchengkun/Documents/面试题/egg/config/config.default.js change
+2026-01-13 18:29:03,908 INFO 39333 [egg-watcher] Received a change event from eventSource: {"path":"/Users/wangchengkun/Documents/面试题/egg/app.js","event":"change","stat":{"dev":16777233,"mode":33188,"nlink":1,"uid":501,"gid":20,"rdev":0,"blksize":4096,"ino":120067972,"size":946,"blocks":8,"atimeMs":1768300143904.6343,"mtimeMs":1768299731998.8787,"ctimeMs":1768299731998.8787,"birthtimeMs":1768299728195.1033}}
+2026-01-13 18:29:04,114 WARN 39333 [agent:development] reload worker because /Users/wangchengkun/Documents/面试题/egg/app.js change
+2026-01-13 18:29:04,972 INFO 39333 [egg-watcher] Received a change event from eventSource: {"path":"/Users/wangchengkun/Documents/面试题/egg/app.js","event":"change","stat":{"dev":16777233,"mode":33188,"nlink":1,"uid":501,"gid":20,"rdev":0,"blksize":4096,"ino":120067972,"size":946,"blocks":8,"atimeMs":1768300144972.2615,"mtimeMs":1768299731998.8787,"ctimeMs":1768299731998.8787,"birthtimeMs":1768299728195.1033}}
+2026-01-13 18:29:05,177 WARN 39333 [agent:development] reload worker because /Users/wangchengkun/Documents/面试题/egg/app.js change
+2026-01-13 18:29:10,046 INFO 39333 [egg-watcher] Received a change event from eventSource: {"path":"/Users/wangchengkun/Documents/面试题/egg/app.js","event":"change","stat":{"dev":16777233,"mode":33188,"nlink":1,"uid":501,"gid":20,"rdev":0,"blksize":4096,"ino":120067972,"size":946,"blocks":8,"atimeMs":1768300150045.977,"mtimeMs":1768299731998.8787,"ctimeMs":1768299731998.8787,"birthtimeMs":1768299728195.1033}}
+2026-01-13 18:29:10,247 WARN 39333 [agent:development] reload worker because /Users/wangchengkun/Documents/面试题/egg/app.js change
+2026-01-13 18:33:57,475 INFO 43789 [egg:logger] init all loggers with options: {"dir":"/Users/wangchengkun/Documents/面试题/egg/logs/egg-simple","encoding":"utf8","env":"local","level":"INFO","consoleLevel":"INFO","disableConsoleAfterReady":false,"outputJSON":false,"buffer":true,"appLogName":"egg-simple-web.log","coreLogName":"egg-web.log","agentLogName":"egg-agent.log","errorLogName":"common-error.log","coreLogger":{"consoleLevel":"WARN"},"allowDebugAtProd":false,"enablePerformanceTimer":false,"enableFastContextLogger":false,"type":"agent","localStorage":{}}
+2026-01-13 18:33:57,479 INFO 43789 [egg:core] dump config after load, 2ms
+2026-01-13 18:33:57,501 INFO 43789 [egg-watcher] Start watching: ["/Users/wangchengkun/Documents/面试题/egg/app","/Users/wangchengkun/Documents/面试题/egg/config","/Users/wangchengkun/Documents/面试题/egg/mocks","/Users/wangchengkun/Documents/面试题/egg/mocks_proxy","/Users/wangchengkun/Documents/面试题/egg/app.js"]
+2026-01-13 18:33:57,501 INFO 43789 [egg-watcher] Start watching: "/Users/wangchengkun/Documents/面试题/egg/app"
+2026-01-13 18:33:57,501 INFO 43789 [egg-watcher] Start watching: "/Users/wangchengkun/Documents/面试题/egg/config"
+2026-01-13 18:33:57,501 INFO 43789 [egg-watcher] Start watching: "/Users/wangchengkun/Documents/面试题/egg/mocks"
+2026-01-13 18:33:57,501 INFO 43789 [egg-watcher] Start watching: "/Users/wangchengkun/Documents/面试题/egg/mocks_proxy"
+2026-01-13 18:33:57,501 INFO 43789 [egg-watcher] Start watching: "/Users/wangchengkun/Documents/面试题/egg/app.js"
+2026-01-13 18:33:57,501 INFO 43789 [egg-watcher:agent] watcher start success
+2026-01-13 18:33:57,507 INFO 43789 egg start timeline:
+▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ [170ms] - #0 Process Start
+                                ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ [93ms] - #1 Application Start
+                                ▇ [4ms] - #2 Load Plugin
+                                 ▇ [5ms] - #3 Load Config
+                                 ▇ [0ms] - #4 Require(0) config/config.default.js
+                                 ▇ [0ms] - #5 Require(1) node_modules/.pnpm/egg-session@3.3.0/node_modules/egg-session/config/config.default.js
+                                 ▇ [0ms] - #6 Require(2) node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js
+                                 ▇ [0ms] - #7 Require(3) node_modules/.pnpm/egg-jsonp@2.0.0/node_modules/egg-jsonp/config/config.default.js
+                                 ▇ [0ms] - #8 Require(4) node_modules/.pnpm/egg-onerror@2.4.0/node_modules/egg-onerror/config/config.default.js
+                                 ▇ [0ms] - #9 Require(5) node_modules/.pnpm/egg-i18n@2.1.1/node_modules/egg-i18n/config/config.default.js
+                                 ▇ [0ms] - #10 Require(6) node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/config/config.default.js
+                                 ▇ [0ms] - #11 Require(7) node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/config/config.default.js
+                                 ▇ [0ms] - #12 Require(8) node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js
+                                 ▇ [0ms] - #13 Require(9) node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/config/config.default.js
+                                 ▇ [0ms] - #14 Require(10) node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/config/config.default.js
+                                  ▇ [0ms] - #15 Require(11) node_modules/.pnpm/egg-static@2.3.1/node_modules/egg-static/config/config.default.js
+                                  ▇ [0ms] - #16 Require(12) node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/config/config.default.js
+                                  ▇ [0ms] - #17 Require(13) node_modules/.pnpm/egg-cors@3.0.1/node_modules/egg-cors/config/config.default.js
+                                  ▇ [0ms] - #18 Require(14) node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js
+                                  ▇ [0ms] - #19 Require(15) config/config.default.js
+                                  ▇ [0ms] - #20 Require(16) node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.local.js
+                                  ▇ [0ms] - #21 Require(17) node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/config/config.local.js
+                                  ▇ [0ms] - #22 Require(18) node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/config/config.local.js
+                                  ▇ [0ms] - #23 Require(19) node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.local.js
+                                  ▇▇▇▇ [26ms] - #24 Load extend/agent.js
+                                  ▇ [0ms] - #25 Require(20) node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/app/extend/agent.js
+                                  ▇▇▇▇ [24ms] - #26 Require(21) node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/app/extend/agent.js
+                                       ▇ [1ms] - #27 Require(22) node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/app/extend/agent.js
+                                       ▇▇▇ [16ms] - #28 Load extend/context.js
+                                       ▇ [6ms] - #29 Require(23) node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/app/extend/context.js
+                                        ▇ [0ms] - #30 Require(24) node_modules/.pnpm/egg-jsonp@2.0.0/node_modules/egg-jsonp/app/extend/context.js
+                                        ▇ [1ms] - #31 Require(25) node_modules/.pnpm/egg-i18n@2.1.1/node_modules/egg-i18n/app/extend/context.js
+                                        ▇ [7ms] - #32 Require(26) node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/app/extend/context.js
+                                          ▇ [1ms] - #33 Require(27) node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/app/extend/context.js
+                                          ▇ [0ms] - #34 Require(28) node_modules/.pnpm/egg@3.32.0/node_modules/egg/app/extend/context.js
+                                          ▇ [7ms] - #35 Load agent.js
+                                          ▇ [0ms] - #36 Require(29) node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/agent.js
+                                          ▇ [0ms] - #37 Require(30) node_modules/.pnpm/egg-onerror@2.4.0/node_modules/egg-onerror/agent.js
+                                          ▇ [1ms] - #38 Require(31) node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/agent.js
+                                          ▇ [1ms] - #39 Require(32) node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/agent.js
+                                          ▇ [4ms] - #40 Require(33) node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/agent.js
+                                           ▇ [0ms] - #41 Require(34) node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/agent.js
+                                           ▇ [1ms] - #42 Require(35) node_modules/.pnpm/egg@3.32.0/node_modules/egg/agent.js
+                                            ▇▇▇▇ [26ms] - #43 Before Start in node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/lib/init.js:15:14
+                                            ▇▇▇ [16ms] - #44 Before Start in node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/agent.js:12:9
+                                            ▇▇▇▇▇ [28ms] - #45 Before Start in node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/agent.js:9:9
+2026-01-13 18:33:57,507 INFO 43789 [egg:core] dump config after ready, 1ms
+2026-01-13 18:34:33,156 WARN 43789 [agent:development] reload worker because /Users/wangchengkun/Documents/面试题/egg/config/config.default.js change
+2026-01-13 18:34:32,952 INFO 43789 [egg-watcher] Received a change event from eventSource: {"event":"change","path":"/Users/wangchengkun/Documents/面试题/egg/config/config.default.js","stat":{"dev":16777233,"mode":33188,"nlink":1,"uid":501,"gid":20,"rdev":0,"blksize":4096,"ino":120065654,"size":1418,"blocks":8,"atimeMs":1768300472918.1992,"mtimeMs":1768300472887.7395,"ctimeMs":1768300472887.7395,"birthtimeMs":1768299211329.121},"remove":false,"isDirectory":false,"isFile":true}
+2026-01-13 18:34:41,028 WARN 43789 [agent:development] reload worker because /Users/wangchengkun/Documents/面试题/egg/config/config.default.js change
+2026-01-13 18:34:40,777 INFO 43789 [egg-watcher] Received a change event from eventSource: {"event":"change","path":"/Users/wangchengkun/Documents/面试题/egg/config/config.default.js","stat":{"dev":16777233,"mode":33188,"nlink":1,"uid":501,"gid":20,"rdev":0,"blksize":4096,"ino":120065654,"size":1596,"blocks":8,"atimeMs":1768300474914.5208,"mtimeMs":1768300480764.5125,"ctimeMs":1768300480764.5125,"birthtimeMs":1768299211329.121},"remove":false,"isDirectory":false,"isFile":true}
+2026-01-13 18:34:40,827 INFO 43789 [egg-watcher] Received a change event from eventSource: {"event":"change","path":"/Users/wangchengkun/Documents/面试题/egg/config/config.default.js","stat":{"dev":16777233,"mode":33188,"nlink":1,"uid":501,"gid":20,"rdev":0,"blksize":4096,"ino":120065654,"size":1596,"blocks":8,"atimeMs":1768300480788.8442,"mtimeMs":1768300480764.5125,"ctimeMs":1768300480764.5125,"birthtimeMs":1768299211329.121},"remove":false,"isDirectory":false,"isFile":true}
+2026-01-13 18:35:39,013 INFO 44401 [egg:logger] init all loggers with options: {"dir":"/Users/wangchengkun/Documents/面试题/egg/logs/egg-simple","encoding":"utf8","env":"local","level":"INFO","consoleLevel":"INFO","disableConsoleAfterReady":false,"outputJSON":false,"buffer":true,"appLogName":"egg-simple-web.log","coreLogName":"egg-web.log","agentLogName":"egg-agent.log","errorLogName":"common-error.log","coreLogger":{"consoleLevel":"WARN"},"allowDebugAtProd":false,"enablePerformanceTimer":false,"enableFastContextLogger":false,"type":"agent","localStorage":{}}
+2026-01-13 18:35:39,017 INFO 44401 [egg:core] dump config after load, 2ms
+2026-01-13 18:35:39,035 INFO 44401 [egg-watcher] Start watching: ["/Users/wangchengkun/Documents/面试题/egg/app","/Users/wangchengkun/Documents/面试题/egg/config","/Users/wangchengkun/Documents/面试题/egg/mocks","/Users/wangchengkun/Documents/面试题/egg/mocks_proxy","/Users/wangchengkun/Documents/面试题/egg/app.js"]
+2026-01-13 18:35:39,035 INFO 44401 [egg-watcher] Start watching: "/Users/wangchengkun/Documents/面试题/egg/app"
+2026-01-13 18:35:39,035 INFO 44401 [egg-watcher] Start watching: "/Users/wangchengkun/Documents/面试题/egg/config"
+2026-01-13 18:35:39,035 INFO 44401 [egg-watcher] Start watching: "/Users/wangchengkun/Documents/面试题/egg/mocks"
+2026-01-13 18:35:39,035 INFO 44401 [egg-watcher] Start watching: "/Users/wangchengkun/Documents/面试题/egg/mocks_proxy"
+2026-01-13 18:35:39,035 INFO 44401 [egg-watcher] Start watching: "/Users/wangchengkun/Documents/面试题/egg/app.js"
+2026-01-13 18:35:39,036 INFO 44401 [egg-watcher:agent] watcher start success
+2026-01-13 18:35:39,041 INFO 44401 egg start timeline:
+▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ [165ms] - #0 Process Start
+                                ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ [90ms] - #1 Application Start
+                                ▇ [3ms] - #2 Load Plugin
+                                 ▇ [5ms] - #3 Load Config
+                                 ▇ [0ms] - #4 Require(0) config/config.default.js
+                                 ▇ [0ms] - #5 Require(1) node_modules/.pnpm/egg-session@3.3.0/node_modules/egg-session/config/config.default.js
+                                 ▇ [0ms] - #6 Require(2) node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js
+                                 ▇ [0ms] - #7 Require(3) node_modules/.pnpm/egg-jsonp@2.0.0/node_modules/egg-jsonp/config/config.default.js
+                                 ▇ [0ms] - #8 Require(4) node_modules/.pnpm/egg-onerror@2.4.0/node_modules/egg-onerror/config/config.default.js
+                                 ▇ [0ms] - #9 Require(5) node_modules/.pnpm/egg-i18n@2.1.1/node_modules/egg-i18n/config/config.default.js
+                                  ▇ [0ms] - #10 Require(6) node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/config/config.default.js
+                                  ▇ [0ms] - #11 Require(7) node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/config/config.default.js
+                                  ▇ [0ms] - #12 Require(8) node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js
+                                  ▇ [0ms] - #13 Require(9) node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/config/config.default.js
+                                  ▇ [0ms] - #14 Require(10) node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/config/config.default.js
+                                  ▇ [1ms] - #15 Require(11) node_modules/.pnpm/egg-static@2.3.1/node_modules/egg-static/config/config.default.js
+                                  ▇ [0ms] - #16 Require(12) node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/config/config.default.js
+                                  ▇ [0ms] - #17 Require(13) node_modules/.pnpm/egg-cors@3.0.1/node_modules/egg-cors/config/config.default.js
+                                  ▇ [0ms] - #18 Require(14) node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js
+                                  ▇ [0ms] - #19 Require(15) config/config.default.js
+                                  ▇ [0ms] - #20 Require(16) node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.local.js
+                                  ▇ [0ms] - #21 Require(17) node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/config/config.local.js
+                                  ▇ [0ms] - #22 Require(18) node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/config/config.local.js
+                                  ▇ [0ms] - #23 Require(19) node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.local.js
+                                  ▇▇▇▇▇ [26ms] - #24 Load extend/agent.js
+                                  ▇ [2ms] - #25 Require(20) node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/app/extend/agent.js
+                                   ▇▇▇▇ [22ms] - #26 Require(21) node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/app/extend/agent.js
+                                       ▇ [0ms] - #27 Require(22) node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/app/extend/agent.js
+                                       ▇▇▇ [16ms] - #28 Load extend/context.js
+                                       ▇ [5ms] - #29 Require(23) node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/app/extend/context.js
+                                        ▇ [0ms] - #30 Require(24) node_modules/.pnpm/egg-jsonp@2.0.0/node_modules/egg-jsonp/app/extend/context.js
+                                        ▇ [1ms] - #31 Require(25) node_modules/.pnpm/egg-i18n@2.1.1/node_modules/egg-i18n/app/extend/context.js
+                                         ▇ [8ms] - #32 Require(26) node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/app/extend/context.js
+                                          ▇ [0ms] - #33 Require(27) node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/app/extend/context.js
+                                          ▇ [0ms] - #34 Require(28) node_modules/.pnpm/egg@3.32.0/node_modules/egg/app/extend/context.js
+                                          ▇ [8ms] - #35 Load agent.js
+                                          ▇ [1ms] - #36 Require(29) node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/agent.js
+                                           ▇ [0ms] - #37 Require(30) node_modules/.pnpm/egg-onerror@2.4.0/node_modules/egg-onerror/agent.js
+                                           ▇ [1ms] - #38 Require(31) node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/agent.js
+                                           ▇ [1ms] - #39 Require(32) node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/agent.js
+                                           ▇ [4ms] - #40 Require(33) node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/agent.js
+                                            ▇ [0ms] - #41 Require(34) node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/agent.js
+                                            ▇ [0ms] - #42 Require(35) node_modules/.pnpm/egg@3.32.0/node_modules/egg/agent.js
+                                            ▇▇▇▇ [22ms] - #43 Before Start in node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/lib/init.js:15:14
+                                            ▇▇ [15ms] - #44 Before Start in node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/agent.js:12:9
+                                            ▇▇▇▇ [24ms] - #45 Before Start in node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/agent.js:9:9
+2026-01-13 18:35:39,041 INFO 44401 [egg:core] dump config after ready, 2ms

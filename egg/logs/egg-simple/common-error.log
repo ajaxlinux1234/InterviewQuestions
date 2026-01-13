@@ -20,3 +20,33 @@ name: "PoolWaitTimeoutError"
 pid: 37284
 hostname: localhost
 
+2026-01-13 18:37:49,647 ERROR 45527 [-/127.0.0.1/-/0ms GET /] nodejs.TypeError: The "options" or "port" or "path" argument must be specified
+    at Socket.connect (node:net:1252:11)
+    at Object.connect (node:net:250:17)
+    at /Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:48:24
+    at new Promise (<anonymous>)
+    at tryToConnect (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:46:10)
+    at ClusterServer.waitFor (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:243:23)
+    at [ClusterClient#createClient] (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/cluster.js:42:27)
+    at [ClusterClient#init] (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/base.js:72:49)
+    at new WrapperBase (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/base.js:43:15)
+    at new ClusterClient (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/cluster.js:21:5)
+code: "ERR_MISSING_ARGS"
+pid: 45527
+hostname: localhost
+
+2026-01-13 18:38:34,546 ERROR 45827 [-/127.0.0.1/-/1ms GET /] nodejs.TypeError: The "options" or "port" or "path" argument must be specified
+    at Socket.connect (node:net:1252:11)
+    at Object.connect (node:net:250:17)
+    at /Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:48:24
+    at new Promise (<anonymous>)
+    at tryToConnect (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:46:10)
+    at ClusterServer.waitFor (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:243:23)
+    at [ClusterClient#createClient] (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/cluster.js:42:27)
+    at [ClusterClient#init] (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/base.js:72:49)
+    at new WrapperBase (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/base.js:43:15)
+    at new ClusterClient (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/cluster.js:21:5)
+code: "ERR_MISSING_ARGS"
+pid: 45827
+hostname: localhost
+

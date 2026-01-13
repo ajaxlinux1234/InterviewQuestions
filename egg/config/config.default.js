@@ -3,13 +3,7 @@ const path = require('path');
 
 exports.keys = 'egg-simple-keys';
 
-// HTTPS 配置（HTTP/2 需要 HTTPS）
-exports.httpsOptions = {
-  key: fs.readFileSync(path.join(__dirname, '../certs/key.pem')),
-  cert: fs.readFileSync(path.join(__dirname, '../certs/cert.pem')),
-};
-
-// 集群配置
+// 基本配置 - 保持 HTTP/1.1 兼容
 exports.cluster = {
   listen: {
     port: 7001,

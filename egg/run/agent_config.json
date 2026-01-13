@@ -193,6 +193,7 @@
         "dev": "egg-bin dev",
         "start": "egg-scripts start",
         "stop": "egg-scripts stop",
+        "http2": "node http2-server.js",
         "test-http2": "node test-http2.js"
       },
       "dependencies": {
@@ -311,8 +312,11 @@
       "listen": {
         "path": "",
         "port": 7001,
-        "hostname": "127.0.0.1",
-        "http2": true,
+        "hostname": "127.0.0.1"
+      },
+      "http2": true,
+      "https": true,
+      "httpsOptions": {
         "key": "<Buffer len: 3272>",
         "cert": "<Buffer len: 2021>"
       }
@@ -322,11 +326,6 @@
       "responseTimeout": 60000
     },
     "onClientError": null,
-    "httpsOptions": {
-      "key": "<Buffer len: 3272>",
-      "cert": "<Buffer len: 2021>",
-      "allowHTTP1": true
-    },
     "mysql": {
       "client": {
         "host": "localhost",
@@ -531,6 +530,7 @@
         "dev": "egg-bin dev",
         "start": "egg-scripts start",
         "stop": "egg-scripts stop",
+        "http2": "node http2-server.js",
         "test-http2": "node test-http2.js"
       },
       "dependencies": {

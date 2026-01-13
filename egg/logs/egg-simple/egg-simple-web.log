@@ -21,3 +21,35 @@ pid: 37284
 hostname: localhost
 
 2026-01-13 18:23:49,054 WARN 39334 A client (127.0.0.1:51054) error [HPE_INVALID_METHOD] occurred: Parse Error: Invalid method encountered
+2026-01-13 18:34:23,128 WARN 43790 A client (127.0.0.1:55120) error [HPE_INVALID_METHOD] occurred: Parse Error: Invalid method encountered
+2026-01-13 18:35:47,954 WARN 44402 A client (127.0.0.1:55724) error [HPE_INVALID_METHOD] occurred: Parse Error: Invalid method encountered
+2026-01-13 18:37:49,648 ERROR 45527 [-/127.0.0.1/-/0ms GET /] nodejs.TypeError: The "options" or "port" or "path" argument must be specified
+    at Socket.connect (node:net:1252:11)
+    at Object.connect (node:net:250:17)
+    at /Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:48:24
+    at new Promise (<anonymous>)
+    at tryToConnect (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:46:10)
+    at ClusterServer.waitFor (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:243:23)
+    at [ClusterClient#createClient] (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/cluster.js:42:27)
+    at [ClusterClient#init] (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/base.js:72:49)
+    at new WrapperBase (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/base.js:43:15)
+    at new ClusterClient (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/cluster.js:21:5)
+code: "ERR_MISSING_ARGS"
+pid: 45527
+hostname: localhost
+
+2026-01-13 18:38:34,547 ERROR 45827 [-/127.0.0.1/-/1ms GET /] nodejs.TypeError: The "options" or "port" or "path" argument must be specified
+    at Socket.connect (node:net:1252:11)
+    at Object.connect (node:net:250:17)
+    at /Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:48:24
+    at new Promise (<anonymous>)
+    at tryToConnect (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:46:10)
+    at ClusterServer.waitFor (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/server.js:243:23)
+    at [ClusterClient#createClient] (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/cluster.js:42:27)
+    at [ClusterClient#init] (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/base.js:72:49)
+    at new WrapperBase (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/base.js:43:15)
+    at new ClusterClient (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/cluster-client@3.7.0/node_modules/cluster-client/lib/wrapper/cluster.js:21:5)
+code: "ERR_MISSING_ARGS"
+pid: 45827
+hostname: localhost
+

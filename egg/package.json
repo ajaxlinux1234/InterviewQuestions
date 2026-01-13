@@ -7,6 +7,7 @@
     "start": "egg-scripts start",
     "stop": "egg-scripts stop",
     "http2": "node http2-server.js",
+    "http2-egg": "node http2-egg-server.js",
     "test-http2": "node test-http2.js"
   },
   "dependencies": {

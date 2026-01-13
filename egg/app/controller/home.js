@@ -4,12 +4,13 @@ class HomeController extends Controller {
   async index() {
     const { ctx } = this;
     
-    // 获取协议信息
+    // 获取协议信息 (支持自定义 HTTP/2 检测)
     const httpVersion = ctx.req.httpVersion || 'unknown';
+    const isHTTP2 = httpVersion === '2.0' || ctx.isHTTP2 || false;
     const protocol = ctx.protocol;
     
     ctx.body = {
-      message: 'Welcome to HTTP/2.0 Egg.js Server! 🚀',
+      message: 'Welcome to HTTP/2.0 Egg.js Server! 333🚀',
       timestamp: new Date().toISOString(),
       status: 'success',
       server: {
@@ -17,8 +18,8 @@ class HomeController extends Controller {
         version: '3.x',
         protocol: httpVersion,
         scheme: protocol,
-        encrypted: ctx.secure,
-        http2Enabled: httpVersion === '2.0'
+        encrypted: ctx.secure || protocol === 'https',
+        http2Enabled: isHTTP2
       },
       endpoints: {
         user: '/user?userId=yourname',

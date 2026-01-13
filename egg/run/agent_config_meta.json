@@ -4,16 +4,14 @@
     "listen": {
       "port": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
       "hostname": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
-      "http2": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
-      "key": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
-      "cert": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
       "path": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    },
+    "http2": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+    "https": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+    "httpsOptions": {
+      "key": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "cert": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js"
     }
-  },
-  "httpsOptions": {
-    "key": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
-    "cert": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
-    "allowHTTP1": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js"
   },
   "mysql": {
     "client": {
@@ -213,6 +211,7 @@
       "dev": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
       "start": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
       "stop": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "http2": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
       "test-http2": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
     },
     "dependencies": {
