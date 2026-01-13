@@ -1,0 +1,323 @@
+{
+  "keys": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+  "httpsOptions": {
+    "key": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+    "cert": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js"
+  },
+  "cluster": {
+    "listen": {
+      "port": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "hostname": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "path": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    }
+  },
+  "mysql": {
+    "client": {
+      "host": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "port": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "user": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "password": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "database": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "connectionLimit": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "acquireTimeout": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "timeout": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js"
+    }
+  },
+  "redis": {
+    "client": {
+      "port": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "host": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "password": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "db": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "family": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js"
+    }
+  },
+  "security": {
+    "csrf": {
+      "enable": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+      "type": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "ignoreJSON": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "useSession": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "cookieName": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "sessionName": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "headerName": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "bodyName": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "queryName": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "rotateWhenInvalid": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "supportedRequests": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "refererWhiteList": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "cookieOptions": {
+        "signed": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+      }
+    },
+    "domainWhiteList": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+    "protocolWhiteList": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+    "defaultMiddleware": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+    "xframe": {
+      "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "value": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+    },
+    "hsts": {
+      "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.local.js",
+      "maxAge": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "includeSubdomains": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+    },
+    "dta": {
+      "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+    },
+    "methodnoallow": {
+      "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+    },
+    "noopen": {
+      "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+    },
+    "nosniff": {
+      "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+    },
+    "referrerPolicy": {
+      "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "value": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+    },
+    "xssProtection": {
+      "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "value": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+    },
+    "csp": {
+      "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "policy": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+    },
+    "ssrf": {
+      "ipBlackList": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "ipExceptionList": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "hostnameExceptionList": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js",
+      "checkAddress": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+    }
+  },
+  "cors": {
+    "origin": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js",
+    "allowMethods": "/Users/wangchengkun/Documents/面试题/egg/config/config.default.js"
+  },
+  "session": {
+    "maxAge": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-session@3.3.0/node_modules/egg-session/config/config.default.js",
+    "key": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-session@3.3.0/node_modules/egg-session/config/config.default.js",
+    "httpOnly": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-session@3.3.0/node_modules/egg-session/config/config.default.js",
+    "encrypt": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-session@3.3.0/node_modules/egg-session/config/config.default.js",
+    "logValue": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-session@3.3.0/node_modules/egg-session/config/config.default.js"
+  },
+  "helper": {
+    "shtml": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-security@3.7.0/node_modules/egg-security/config/config.default.js"
+  },
+  "jsonp": {
+    "limit": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-jsonp@2.0.0/node_modules/egg-jsonp/config/config.default.js",
+    "callback": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-jsonp@2.0.0/node_modules/egg-jsonp/config/config.default.js",
+    "csrf": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-jsonp@2.0.0/node_modules/egg-jsonp/config/config.default.js"
+  },
+  "onerror": {
+    "errorPageUrl": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-onerror@2.4.0/node_modules/egg-onerror/config/config.default.js",
+    "appErrorFilter": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-onerror@2.4.0/node_modules/egg-onerror/config/config.default.js",
+    "templatePath": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-onerror@2.4.0/node_modules/egg-onerror/config/config.default.js"
+  },
+  "i18n": {
+    "defaultLocale": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-i18n@2.1.1/node_modules/egg-i18n/config/config.default.js",
+    "dirs": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-i18n@2.1.1/node_modules/egg-i18n/config/config.default.js",
+    "queryField": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-i18n@2.1.1/node_modules/egg-i18n/config/config.default.js",
+    "cookieField": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-i18n@2.1.1/node_modules/egg-i18n/config/config.default.js",
+    "cookieDomain": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-i18n@2.1.1/node_modules/egg-i18n/config/config.default.js",
+    "cookieMaxAge": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-i18n@2.1.1/node_modules/egg-i18n/config/config.default.js"
+  },
+  "watcher": {
+    "type": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/config/config.local.js",
+    "eventSources": {
+      "default": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/config/config.default.js",
+      "development": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-watcher@3.1.1/node_modules/egg-watcher/config/config.default.js"
+    }
+  },
+  "customLogger": {
+    "scheduleLogger": {
+      "consoleLevel": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/config/config.default.js",
+      "file": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/config/config.default.js"
+    }
+  },
+  "schedule": {
+    "directory": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-schedule@4.0.1/node_modules/egg-schedule/config/config.default.js"
+  },
+  "multipart": {
+    "mode": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "autoFields": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "defaultCharset": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "defaultParamCharset": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "fieldNameSize": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "fieldSize": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "fields": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "fileSize": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "files": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "fileExtensions": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "whitelist": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "allowArrayField": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "tmpdir": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+    "cleanSchedule": {
+      "cron": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js",
+      "disable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-multipart@3.5.0/node_modules/egg-multipart/config/config.default.js"
+    }
+  },
+  "development": {
+    "watchDirs": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/config/config.default.js",
+    "ignoreDirs": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/config/config.default.js",
+    "fastReady": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/config/config.default.js",
+    "reloadOnDebug": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/config/config.default.js",
+    "overrideDefault": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/config/config.default.js",
+    "overrideIgnore": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-development@3.0.2/node_modules/egg-development/config/config.default.js"
+  },
+  "logrotator": {
+    "filesRotateByHour": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/config/config.default.js",
+    "hourDelimiter": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/config/config.default.js",
+    "filesRotateBySize": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/config/config.default.js",
+    "maxFileSize": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/config/config.default.js",
+    "maxFiles": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/config/config.default.js",
+    "rotateDuration": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/config/config.default.js",
+    "maxDays": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-logrotator@3.2.0/node_modules/egg-logrotator/config/config.default.js"
+  },
+  "static": {
+    "prefix": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-static@2.3.1/node_modules/egg-static/config/config.default.js",
+    "dir": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-static@2.3.1/node_modules/egg-static/config/config.default.js",
+    "dynamic": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-static@2.3.1/node_modules/egg-static/config/config.default.js",
+    "preload": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-static@2.3.1/node_modules/egg-static/config/config.default.js",
+    "buffer": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-static@2.3.1/node_modules/egg-static/config/config.default.js",
+    "maxFiles": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-static@2.3.1/node_modules/egg-static/config/config.default.js"
+  },
+  "view": {
+    "root": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/config/config.default.js",
+    "cache": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/config/config.local.js",
+    "defaultExtension": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/config/config.default.js",
+    "defaultViewEngine": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/config/config.default.js",
+    "mapping": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-view@2.1.4/node_modules/egg-view/config/config.default.js"
+  },
+  "env": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "name": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "cookies": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "proxy": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "maxIpsCount": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "maxProxyCount": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "protocolHeaders": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "ipHeaders": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "hostHeaders": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "pkg": {
+    "name": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "version": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "description": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "scripts": {
+      "dev": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "start": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "stop": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "test-http2": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    },
+    "dependencies": {
+      "egg": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "egg-cors": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "egg-mysql": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "egg-redis": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "egg-scripts": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "http2": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "ioredis": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "mysql2": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "spdy": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    },
+    "devDependencies": {
+      "egg-bin": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "egg-mock": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    },
+    "engines": {
+      "node": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    }
+  },
+  "baseDir": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "HOME": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "rundir": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "dump": {
+    "ignore": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "timing": {
+      "slowBootActionMinDuration": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    }
+  },
+  "confusedConfigurations": {
+    "bodyparser": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "notFound": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "sitefile": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "middlewares": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "httpClient": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+  },
+  "notfound": {
+    "pageUrl": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+  },
+  "siteFile": {
+    "/favicon.ico": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "cacheControl": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+  },
+  "bodyParser": {
+    "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "encoding": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "formLimit": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "jsonLimit": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "textLimit": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "strict": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "queryString": {
+      "arrayLimit": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "depth": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "parameterLimit": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    },
+    "onerror": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+  },
+  "logger": {
+    "dir": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "encoding": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "env": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "level": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "consoleLevel": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "disableConsoleAfterReady": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "outputJSON": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "buffer": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "appLogName": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "coreLogName": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "agentLogName": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "errorLogName": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "coreLogger": {
+      "consoleLevel": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.local.js"
+    },
+    "allowDebugAtProd": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "enablePerformanceTimer": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "enableFastContextLogger": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+  },
+  "httpclient": {
+    "enableDNSCache": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "dnsCacheLookupInterval": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "dnsCacheMaxLength": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "request": {
+      "timeout": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    },
+    "httpAgent": {
+      "keepAlive": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "freeSocketTimeout": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "maxSockets": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "maxFreeSockets": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    },
+    "httpsAgent": {
+      "keepAlive": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "freeSocketTimeout": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "maxSockets": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+      "maxFreeSockets": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+    },
+    "useHttpClientNext": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+  },
+  "meta": {
+    "enable": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "logging": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+  },
+  "coreMiddleware": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "workerStartTimeout": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "serverTimeout": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+  "clusterClient": {
+    "maxWaitTime": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js",
+    "responseTimeout": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+  },
+  "onClientError": "/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg@3.32.0/node_modules/egg/config/config.default.js"
+}

@@ -1,0 +1,23 @@
+2026-01-13 18:16:31,613 ERROR 37246 [-/127.0.0.1/-/0ms GET /] nodejs.RDSClientGetConnectionError: connect ETIMEDOUT
+    at PoolConnection._handleTimeoutError (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/mysql2@3.16.0/node_modules/mysql2/lib/base/connection.js:200:17)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7)
+errorno: "ETIMEDOUT"
+code: "ETIMEDOUT"
+syscall: "connect"
+fatal: true
+name: "RDSClientGetConnectionError"
+pid: 37246
+hostname: localhost
+
+2026-01-13 18:16:39,166 ERROR 37284 [-/127.0.0.1/-/0ms GET /] nodejs.PoolWaitTimeoutError: get connection timeout after 500.4633329999999ms
+    at RDSClient.getConnectionWithTimeout (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/@eggjs+rds@1.5.0/node_modules/@eggjs/rds/lib/client.js:189:19)
+    at async RDSClient.getConnection (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/@eggjs+rds@1.5.0/node_modules/@eggjs/rds/lib/client.js:196:27)
+    at async #getConnection (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/@eggjs+rds@1.5.0/node_modules/@eggjs/rds/lib/client.js:153:22)
+    at async #executeWithConnection (/Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/@eggjs+rds@1.5.0/node_modules/@eggjs/rds/lib/client.js:134:41)
+    at async /Users/wangchengkun/Documents/面试题/egg/node_modules/.pnpm/egg-mysql@5.0.0/node_modules/egg-mysql/lib/mysql.js:10:22
+name: "PoolWaitTimeoutError"
+pid: 37284
+hostname: localhost
+
+2026-01-13 18:23:49,054 WARN 39334 A client (127.0.0.1:51054) error [HPE_INVALID_METHOD] occurred: Parse Error: Invalid method encountered
