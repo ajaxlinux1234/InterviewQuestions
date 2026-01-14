@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, LogOut, Shield, Clock, Mail, Settings, Package } from 'lucide-react';
+import { User, LogOut, Shield, Clock, Mail, Settings, Package, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -150,6 +150,25 @@ export const DashboardPage: React.FC = () => {
                         </p>
                         <p className="text-sm text-blue-600 group-hover:text-blue-700">
                           管理实验室仪器设备
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                  
+                  <Link
+                    to="/chat"
+                    className="bg-green-50 hover:bg-green-100 p-4 rounded-lg transition-colors group"
+                  >
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <MessageCircle className="w-6 h-6 text-green-600 group-hover:text-green-700" />
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-green-800 group-hover:text-green-900">
+                          即时通讯
+                        </p>
+                        <p className="text-sm text-green-600 group-hover:text-green-700">
+                          实时聊天和消息
                         </p>
                       </div>
                     </div>

@@ -25,11 +25,16 @@ import { DatabaseService } from './services/database.service';
 import { RedisService } from './services/redis.service';
 import { AuthModule } from './auth/auth.module';
 import { InstrumentModule } from './modules/instrument.module';
+import { ImModule } from './modules/im.module';
 import { User } from './entities/user.entity';
 import { UserToken } from './entities/user-token.entity';
 import { Instrument } from './entities/instrument.entity';
 import { InstrumentCategory } from './entities/instrument-category.entity';
 import { InstrumentBrand } from './entities/instrument-brand.entity';
+import { Contact } from './entities/contact.entity';
+import { Conversation } from './entities/conversation.entity';
+import { ConversationMember } from './entities/conversation-member.entity';
+import { Message } from './entities/message.entity';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 
 /**
@@ -51,7 +56,17 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
       username: process.env.MYSQL_USER || 'root',            // 数据库用户名
       password: process.env.MYSQL_PASSWORD || '',            // 数据库密码
       database: process.env.MYSQL_DATABASE || 'im_service',  // 数据库名称
-      entities: [User, UserToken, Instrument, InstrumentCategory, InstrumentBrand], // 实体类列表（对应数据库表）
+      entities: [
+        User, 
+        UserToken, 
+        Instrument, 
+        InstrumentCategory, 
+        InstrumentBrand,
+        Contact,              // IM 联系人表
+        Conversation,         // IM 会话表
+        ConversationMember,   // IM 会话成员表
+        Message,              // IM 消息表
+      ], // 实体类列表（对应数据库表）
       synchronize: false,                                    // 是否自动同步数据库结构（生产环境应设为 false）
       extra: {
         connectionLimit: 5,    // 连接池最大连接数
@@ -65,6 +80,9 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
     
     // 仪器管理模块 - 处理仪器的增删改查
     InstrumentModule,
+    
+    // IM 即时通讯模块 - 处理实时消息、会话、联系人管理
+    ImModule,
   ],
   
   // 控制器列表

@@ -81,6 +81,19 @@ async function bootstrap() {
     methods: ['GET', 'HEAD', 'PUT', 'POST', 'DELETE', 'PATCH'],    // 允许的 HTTP 方法
   });
 
+  // 注册 multipart 插件（用于文件上传）
+  await app.register(require('@fastify/multipart'), {
+    limits: {
+      fileSize: 50 * 1024 * 1024, // 最大文件大小 50MB
+    },
+  });
+
+  // 注册静态文件服务（用于访问上传的图片和视频）
+  await app.register(require('@fastify/static'), {
+    root: path.join(__dirname, '../uploads'),  // 静态文件根目录
+    prefix: '/uploads/',                        // URL 前缀
+  });
+
   // 启动服务器
   const port = 7002;
   await app.listen(port, '127.0.0.1');  // 监听本地 7002 端口

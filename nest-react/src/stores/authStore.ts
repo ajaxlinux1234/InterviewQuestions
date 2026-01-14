@@ -24,11 +24,14 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
 
       setAuth: (user: User, token: string) => {
-        localStorage.setItem('token', token);
+        // 确保 token 是纯字符串，不包含引号
+        const cleanToken = typeof token === 'string' ? token.trim() : token;
+        
+        localStorage.setItem('token', cleanToken);
         localStorage.setItem('user', JSON.stringify(user));
         set({
           user,
-          token,
+          token: cleanToken,
           isAuthenticated: true,
           isLoading: false
         });

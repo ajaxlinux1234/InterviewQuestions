@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { InstrumentPage } from './pages/InstrumentPage';
+import { ChatPage } from './pages/ChatPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 // 创建 QueryClient 实例
@@ -42,6 +43,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <InstrumentPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/chat" 
+              element={
+                <ProtectedRoute>
+                  <ChatPage />
                 </ProtectedRoute>
               } 
             />

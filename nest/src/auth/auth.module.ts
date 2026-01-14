@@ -63,6 +63,7 @@ import { UserToken } from '../entities/user-token.entity';
   exports: [
     AuthService,  // 导出认证服务，供其他模块使用
     AuthGuard,    // 导出认证守卫，供其他模块的路由保护使用
+    JwtModule,    // 导出 JWT 模块，供其他模块使用 JwtService
   ],
 })
 export class AuthModule {
