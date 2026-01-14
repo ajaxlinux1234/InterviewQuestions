@@ -1,6 +1,6 @@
 ---
 title: IM (即时通讯) 模块需求规格
-status: in-progress (约 70% 完成)
+status: in-progress (约 75% 完成)
 created: 2026-01-14
 updated: 2026-01-14
 ---
@@ -82,6 +82,14 @@ updated: 2026-01-14
   - [x] getOnlineUsers() - 获取在线用户列表
   - [x] isUserOnline() - 检查用户是否在线
   - [x] sendToUser() - 向指定用户发送消息
+  - [x] WebRTC 信令事件（音视频通话）
+    - [x] @SubscribeMessage('callInvite') - 发送通话邀请
+    - [x] @SubscribeMessage('callAccept') - 接受通话
+    - [x] @SubscribeMessage('callReject') - 拒绝通话
+    - [x] @SubscribeMessage('callHangup') - 挂断通话
+    - [x] @SubscribeMessage('webrtcOffer') - 转发 SDP Offer
+    - [x] @SubscribeMessage('webrtcAnswer') - 转发 SDP Answer
+    - [x] @SubscribeMessage('webrtcIceCandidate') - 转发 ICE 候选
 
 ## 已完成功能（续）
 
@@ -203,6 +211,36 @@ POST   /api/im/upload/video          - 上传视频 ✅
 - ✅ 所有会话共享同一个 socket 连接
 - ✅ 只在组件卸载时移除事件监听器，不断开连接
 - ✅ 优化 useEffect 依赖，避免重复连接
+
+#### 6. WebRTC 音视频通话 ✅
+**功能**: 实现基于 WebRTC 的点对点音视频通话
+**文档**: `WEBRTC_CALLING.md`
+
+**后端实现** (`nest/src/gateways/im.gateway.ts`):
+- ✅ WebRTC 信令服务器（转发 Offer/Answer/ICE）
+- ✅ 通话邀请/接受/拒绝/挂断事件
+
+**前端实现**:
+- ✅ WebRTC 服务 (`nest-react/src/services/webrtcService.ts`)
+  - PeerConnection 管理
+  - 媒体流处理
+  - 通话状态机
+  - 音视频控制
+- ✅ 通话 UI 组件 (`nest-react/src/components/CallModal.tsx`)
+  - 全屏通话界面
+  - 视频显示（本地+远程）
+  - 控制按钮（接受/拒绝/挂断/静音/关闭摄像头）
+  - 通话计时器
+- ✅ 聊天页面集成 (`nest-react/src/pages/ChatPage.tsx`)
+  - 语音/视频通话按钮（仅私聊）
+  - 自动显示/隐藏通话模态框
+
+**支持功能**:
+- ✅ 语音通话
+- ✅ 视频通话
+- ✅ 实时音视频流传输
+- ✅ 通话控制（静音、关闭摄像头）
+- ✅ 通话状态显示
 
 ## 待完成功能
 
@@ -519,7 +557,7 @@ interface ImStore {
 
 ## 当前状态总结
 
-### 已完成 (约 70%)
+### 已完成 (约 75%)
 - ✅ 完整的后端 API 和 WebSocket 实现
 - ✅ 数据库设计和实体类
 - ✅ 前端基础架构（Socket、API、Store）
@@ -527,9 +565,10 @@ interface ImStore {
 - ✅ 文本消息收发
 - ✅ 未读状态管理
 - ✅ 文件上传后端 API
+- ✅ WebRTC 音视频通话（语音+视频）
 - ✅ 关键问题修复（认证、重复消息、未读状态、文件上传）
 
-### 待完成 (约 30%)
+### 待完成 (约 25%)
 - ⏳ 图片/视频消息 UI
 - ⏳ 文件上传 UI
 - ⏳ Emoji 选择器

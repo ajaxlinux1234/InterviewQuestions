@@ -12,18 +12,26 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useImStore } from '../stores/imStore';
 import { socketService } from '../services/socketService';
+import { webrtcService } from '../services/webrtcService';
 import { getContacts, getConversations, getMessages, clearConversations, createConversation } from '../services/imApi';
 import { ConversationList } from '../components/ConversationList';
 import { MessageList } from '../components/MessageList';
 import { MessageInput } from '../components/MessageInput';
 import { ConversationDetail } from '../components/ConversationDetail';
 import { AddContactModal } from '../components/AddContactModal';
+import { CallModal } from '../components/CallModal';
 
 export function ChatPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'conversations' | 'contacts'>('conversations');
   const [showDetail, setShowDetail] = useState(false);
   const [showAddContact, setShowAddContact] = useState(false);
+  const [showCallModal, setShowCallModal] = useState(false);
+  
+  // 监控 showCallModal 状态变化
+  useEffect(() => {
+    console.log('>>> showCallModal 状态变化:', showCallModal);
+  }, [showCallModal]);
   
   const {
     contacts,
@@ -106,6 +114,32 @@ export function ChatPage() {
     // 连接 WebSocket（如果已连接会复用）
     socketService.connect(token);
 
+    // 初始化 WebRTC 服务（注册通话相关的 Socket 监听器）
+    webrtcService.init();
+
+    // 注册 WebRTC 状态变化监听器
+    console.log('=== 注册 WebRTC 状态变化监听器 ===');
+    console.log('当前 showCallModal 状态:', showCallModal);
+    
+    webrtcService.onStateChange((state) => {
+      console.log('=== WebRTC 状态变化回调被触发 ===');
+      console.log('新状态:', state);
+      console.log('当前 showCallModal:', showCallModal);
+      
+      // 当收到通话邀请或通话状态变化时,显示通话模态框
+      if (state.status !== 'idle') {
+        console.log('准备显示通话模态框, 调用 setShowCallModal(true)');
+        setShowCallModal(true);
+        console.log('setShowCallModal(true) 已调用');
+      } else {
+        console.log('准备隐藏通话模态框, 调用 setShowCallModal(false)');
+        setShowCallModal(false);
+        console.log('setShowCallModal(false) 已调用');
+      }
+    });
+    
+    console.log('=== WebRTC 状态变化监听器注册完成 ===');
+
     // 监听新消息
     const handleNewMessage = (message: any) => {
       console.log('收到新消息:', message);
@@ -162,6 +196,7 @@ export function ChatPage() {
       socketService.off('userStopTyping', handleUserStopTyping);
       // 注意：不调用 disconnect()，保持连接
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]); // 只依赖 navigate，避免重复连接
 
   // 单独处理新消息的已读标记（当 currentConversation 变化时）
@@ -262,6 +297,50 @@ export function ChatPage() {
   const handleAddContactSuccess = () => {
     refetchContacts();
     refetchConversations();
+  };
+
+  // 发起语音通话
+  const handleStartAudioCall = async () => {
+    if (!currentConversation) return;
+    
+    // 获取对方用户 ID (私聊)
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const otherMember = currentConversation.members?.find(m => m.userId !== currentUser.id);
+    
+    if (!otherMember) {
+      alert('无法获取对方信息');
+      return;
+    }
+
+    try {
+      await webrtcService.startCall(otherMember.userId, currentConversation.id, 'audio');
+      setShowCallModal(true);
+    } catch (error) {
+      console.error('发起语音通话失败:', error);
+      alert('发起语音通话失败，请检查麦克风权限');
+    }
+  };
+
+  // 发起视频通话
+  const handleStartVideoCall = async () => {
+    if (!currentConversation) return;
+    
+    // 获取对方用户 ID (私聊)
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const otherMember = currentConversation.members?.find(m => m.userId !== currentUser.id);
+    
+    if (!otherMember) {
+      alert('无法获取对方信息');
+      return;
+    }
+
+    try {
+      await webrtcService.startCall(otherMember.userId, currentConversation.id, 'video');
+      setShowCallModal(true);
+    } catch (error) {
+      console.error('发起视频通话失败:', error);
+      alert('发起视频通话失败，请检查摄像头和麦克风权限');
+    }
   };
 
   return (
@@ -402,14 +481,45 @@ export function ChatPage() {
                     </div>
                   </div>
                 </div>
-                <button
-                  onClick={() => setShowDetail(!showDetail)}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
+                
+                <div className="flex items-center space-x-2">
+                  {/* 语音通话按钮 (仅私聊) */}
+                  {currentConversation.type === 'private' && (
+                    <button
+                      onClick={handleStartAudioCall}
+                      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                      title="语音通话"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    </button>
+                  )}
+                  
+                  {/* 视频通话按钮 (仅私聊) */}
+                  {currentConversation.type === 'private' && (
+                    <button
+                      onClick={handleStartVideoCall}
+                      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                      title="视频通话"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    </button>
+                  )}
+                  
+                  {/* 详情按钮 */}
+                  <button
+                    onClick={() => setShowDetail(!showDetail)}
+                    className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                    title="会话详情"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </button>
+                </div>
               </div>
 
               {/* 消息列表 */}
@@ -446,6 +556,11 @@ export function ChatPage() {
           onClose={() => setShowAddContact(false)}
           onSuccess={handleAddContactSuccess}
         />
+      )}
+
+      {/* 音视频通话模态框 */}
+      {showCallModal && (
+        <CallModal onClose={() => setShowCallModal(false)} />
       )}
     </div>
   );

@@ -167,9 +167,10 @@ class SocketService {
    */
   on(event: string, callback: (...args: any[]) => void): void {
     if (!this.socket) {
-      console.warn('Socket 未连接，无法监听事件');
+      console.warn('Socket 未连接，无法监听事件:', event);
       return;
     }
+    console.log(`注册 Socket 事件监听: ${event}`);
     this.socket.on(event, callback);
   }
 
@@ -247,6 +248,83 @@ class SocketService {
       return;
     }
     this.socket.emit('stopTyping', { conversationId });
+  }
+
+  /**
+   * WebRTC: 发送通话邀请
+   */
+  callInvite(toUserId: number, conversationId: number, callType: 'audio' | 'video'): void {
+    if (!this.socket?.connected) {
+      console.error('Socket 未连接，无法发送通话邀请');
+      return;
+    }
+    this.socket.emit('callInvite', { targetUserId: toUserId, conversationId, callType });
+  }
+
+  /**
+   * WebRTC: 接受通话
+   */
+  callAccept(fromUserId: number, conversationId: number): void {
+    if (!this.socket?.connected) {
+      console.error('Socket 未连接，无法接受通话');
+      return;
+    }
+    this.socket.emit('callAccept', { callerId: fromUserId, conversationId });
+  }
+
+  /**
+   * WebRTC: 拒绝通话
+   */
+  callReject(fromUserId: number, conversationId: number): void {
+    if (!this.socket?.connected) {
+      console.error('Socket 未连接，无法拒绝通话');
+      return;
+    }
+    this.socket.emit('callReject', { callerId: fromUserId, conversationId });
+  }
+
+  /**
+   * WebRTC: 挂断通话
+   */
+  callHangup(toUserId: number, conversationId: number): void {
+    if (!this.socket?.connected) {
+      console.error('Socket 未连接，无法挂断通话');
+      return;
+    }
+    this.socket.emit('callHangup', { targetUserId: toUserId, conversationId });
+  }
+
+  /**
+   * WebRTC: 发送 SDP Offer
+   */
+  webrtcOffer(toUserId: number, offer: RTCSessionDescriptionInit): void {
+    if (!this.socket?.connected) {
+      console.error('Socket 未连接，无法发送 Offer');
+      return;
+    }
+    this.socket.emit('webrtcOffer', { targetUserId: toUserId, offer });
+  }
+
+  /**
+   * WebRTC: 发送 SDP Answer
+   */
+  webrtcAnswer(toUserId: number, answer: RTCSessionDescriptionInit): void {
+    if (!this.socket?.connected) {
+      console.error('Socket 未连接，无法发送 Answer');
+      return;
+    }
+    this.socket.emit('webrtcAnswer', { targetUserId: toUserId, answer });
+  }
+
+  /**
+   * WebRTC: 发送 ICE Candidate
+   */
+  webrtcIceCandidate(toUserId: number, candidate: RTCIceCandidateInit): void {
+    if (!this.socket?.connected) {
+      console.error('Socket 未连接，无法发送 ICE Candidate');
+      return;
+    }
+    this.socket.emit('webrtcIceCandidate', { targetUserId: toUserId, candidate });
   }
 }
 

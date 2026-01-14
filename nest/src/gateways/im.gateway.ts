@@ -295,4 +295,186 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
     }
   }
+
+  // ==================== WebRTC 音视频通话信令 ====================
+
+  /**
+   * 发起通话邀请
+   */
+  @SubscribeMessage('callInvite')
+  handleCallInvite(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { 
+      targetUserId: number; 
+      conversationId: number;
+      callType: 'audio' | 'video';
+    },
+  ) {
+    const userId = client.data.userId;
+    
+    if (!userId) {
+      client.emit('error', { message: '未认证' });
+      return;
+    }
+
+    this.logger.log(`用户 ${userId} 邀请用户 ${data.targetUserId} 进行${data.callType === 'video' ? '视频' : '音频'}通话`);
+
+    // 向目标用户发送通话邀请
+    this.sendToUser(data.targetUserId, 'callInvite', {
+      callerId: userId,
+      conversationId: data.conversationId,
+      callType: data.callType,
+    });
+  }
+
+  /**
+   * 接受通话
+   */
+  @SubscribeMessage('callAccept')
+  handleCallAccept(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { callerId: number; conversationId: number },
+  ) {
+    const userId = client.data.userId;
+    
+    if (!userId) {
+      client.emit('error', { message: '未认证' });
+      return;
+    }
+
+    this.logger.log(`用户 ${userId} 接受了用户 ${data.callerId} 的通话邀请`);
+
+    // 通知发起者对方已接受
+    this.sendToUser(data.callerId, 'callAccepted', {
+      accepterId: userId,
+      conversationId: data.conversationId,
+    });
+  }
+
+  /**
+   * 拒绝通话
+   */
+  @SubscribeMessage('callReject')
+  handleCallReject(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { callerId: number; conversationId: number },
+  ) {
+    const userId = client.data.userId;
+    
+    if (!userId) {
+      client.emit('error', { message: '未认证' });
+      return;
+    }
+
+    this.logger.log(`用户 ${userId} 拒绝了用户 ${data.callerId} 的通话邀请`);
+
+    // 通知发起者对方已拒绝
+    this.sendToUser(data.callerId, 'callRejected', {
+      rejecterId: userId,
+      conversationId: data.conversationId,
+    });
+  }
+
+  /**
+   * 挂断通话
+   */
+  @SubscribeMessage('callHangup')
+  handleCallHangup(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { targetUserId: number; conversationId: number },
+  ) {
+    const userId = client.data.userId;
+    
+    if (!userId) {
+      client.emit('error', { message: '未认证' });
+      return;
+    }
+
+    this.logger.log(`用户 ${userId} 挂断了与用户 ${data.targetUserId} 的通话`);
+
+    // 通知对方通话已挂断
+    this.sendToUser(data.targetUserId, 'callHangup', {
+      userId,
+      conversationId: data.conversationId,
+    });
+  }
+
+  /**
+   * WebRTC Offer (SDP)
+   */
+  @SubscribeMessage('webrtcOffer')
+  handleWebRTCOffer(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { 
+      targetUserId: number; 
+      offer: RTCSessionDescriptionInit;
+    },
+  ) {
+    const userId = client.data.userId;
+    
+    if (!userId) {
+      client.emit('error', { message: '未认证' });
+      return;
+    }
+
+    this.logger.log(`用户 ${userId} 发送 WebRTC Offer 给用户 ${data.targetUserId}`);
+
+    // 转发 Offer 给目标用户
+    this.sendToUser(data.targetUserId, 'webrtcOffer', {
+      callerId: userId,
+      offer: data.offer,
+    });
+  }
+
+  /**
+   * WebRTC Answer (SDP)
+   */
+  @SubscribeMessage('webrtcAnswer')
+  handleWebRTCAnswer(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { 
+      targetUserId: number; 
+      answer: RTCSessionDescriptionInit;
+    },
+  ) {
+    const userId = client.data.userId;
+    
+    if (!userId) {
+      client.emit('error', { message: '未认证' });
+      return;
+    }
+
+    this.logger.log(`用户 ${userId} 发送 WebRTC Answer 给用户 ${data.targetUserId}`);
+
+    // 转发 Answer 给目标用户
+    this.sendToUser(data.targetUserId, 'webrtcAnswer', {
+      answererId: userId,
+      answer: data.answer,
+    });
+  }
+
+  /**
+   * WebRTC ICE Candidate
+   */
+  @SubscribeMessage('webrtcIceCandidate')
+  handleWebRTCIceCandidate(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { 
+      targetUserId: number; 
+      candidate: RTCIceCandidateInit;
+    },
+  ) {
+    const userId = client.data.userId;
+    
+    if (!userId) {
+      client.emit('error', { message: '未认证' });
+      return;
+    }
+
+    // 转发 ICE Candidate 给目标用户
+    this.sendToUser(data.targetUserId, 'webrtcIceCandidate', {
+      userId,
+      candidate: data.candidate,
+    });
+  }
 }
