@@ -24,8 +24,12 @@ import { UserController, PushController } from './controllers/user.controller';
 import { DatabaseService } from './services/database.service';
 import { RedisService } from './services/redis.service';
 import { AuthModule } from './auth/auth.module';
+import { InstrumentModule } from './modules/instrument.module';
 import { User } from './entities/user.entity';
 import { UserToken } from './entities/user-token.entity';
+import { Instrument } from './entities/instrument.entity';
+import { InstrumentCategory } from './entities/instrument-category.entity';
+import { InstrumentBrand } from './entities/instrument-brand.entity';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 
 /**
@@ -47,7 +51,7 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
       username: process.env.MYSQL_USER || 'root',            // 数据库用户名
       password: process.env.MYSQL_PASSWORD || '',            // 数据库密码
       database: process.env.MYSQL_DATABASE || 'im_service',  // 数据库名称
-      entities: [User, UserToken],                           // 实体类列表（对应数据库表）
+      entities: [User, UserToken, Instrument, InstrumentCategory, InstrumentBrand], // 实体类列表（对应数据库表）
       synchronize: false,                                    // 是否自动同步数据库结构（生产环境应设为 false）
       extra: {
         connectionLimit: 5,    // 连接池最大连接数
@@ -58,6 +62,9 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
     
     // 认证模块 - 处理用户登录、注册、权限验证等
     AuthModule,
+    
+    // 仪器管理模块 - 处理仪器的增删改查
+    InstrumentModule,
   ],
   
   // 控制器列表

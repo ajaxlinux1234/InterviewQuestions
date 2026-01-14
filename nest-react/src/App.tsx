@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { InstrumentPage } from './pages/InstrumentPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 // 创建 QueryClient 实例
@@ -33,6 +34,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/instruments" 
+              element={
+                <ProtectedRoute>
+                  <InstrumentPage />
                 </ProtectedRoute>
               } 
             />

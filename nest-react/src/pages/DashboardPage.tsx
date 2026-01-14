@@ -1,5 +1,6 @@
 import React from 'react';
-import { User, LogOut, Shield, Clock, Mail } from 'lucide-react';
+import { User, LogOut, Shield, Clock, Mail, Settings, Package } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 
@@ -128,6 +129,52 @@ export const DashboardPage: React.FC = () => {
 
           {/* 功能区域 */}
           <div className="mt-8">
+            {/* 快捷功能 */}
+            <div className="bg-white shadow rounded-lg mb-6">
+              <div className="px-4 py-5 sm:p-6">
+                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+                  快捷功能
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <Link
+                    to="/instruments"
+                    className="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg transition-colors group"
+                  >
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <Package className="w-6 h-6 text-blue-600 group-hover:text-blue-700" />
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-blue-800 group-hover:text-blue-900">
+                          仪器管理
+                        </p>
+                        <p className="text-sm text-blue-600 group-hover:text-blue-700">
+                          管理实验室仪器设备
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                  
+                  <div className="bg-gray-50 p-4 rounded-lg opacity-50">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <Settings className="w-6 h-6 text-gray-400" />
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-gray-600">
+                          系统设置
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          即将推出
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 系统信息 */}
             <div className="bg-white shadow rounded-lg">
               <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
