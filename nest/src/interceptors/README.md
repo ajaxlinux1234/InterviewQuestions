@@ -257,7 +257,7 @@ getCacheHitRate(): number {
 ### 1. 使用 curl 测试
 ```bash
 # 第一次请求
-curl -I "https://192.168.1.199:7002/api/data"
+curl -I "https://localhost:7002/api/data"
 
 # 检查响应头
 # Cache-Control: public, max-age=300, must-revalidate
@@ -265,7 +265,7 @@ curl -I "https://192.168.1.199:7002/api/data"
 # Last-Modified: Wed, 21 Oct 2024 07:28:00 GMT
 
 # 条件请求测试
-curl -I "https://192.168.1.199:7002/api/data" \
+curl -I "https://localhost:7002/api/data" \
   -H "If-None-Match: W/\"abc123\""
 
 # 应该返回 304 Not Modified

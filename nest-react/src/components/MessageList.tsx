@@ -74,16 +74,16 @@ export function MessageList({ messages }: MessageListProps) {
                   
                   {message.type === 'image' && message.mediaUrl && (
                     <img
-                      src={`https://192.168.1.199:7002${message.mediaUrl}`}
+                      src={`https://localhost:7002${message.mediaUrl}`}
                       alt="图片"
                       className="max-w-sm rounded cursor-pointer hover:opacity-90"
-                      onClick={() => window.open(`https://192.168.1.199:7002${message.mediaUrl}`, '_blank')}
+                      onClick={() => window.open(`https://localhost:7002${message.mediaUrl}`, '_blank')}
                     />
                   )}
                   
                   {message.type === 'video' && message.mediaUrl && (
                     <video
-                      src={`https://192.168.1.199:7002${message.mediaUrl}`}
+                      src={`https://localhost:7002${message.mediaUrl}`}
                       controls
                       className="max-w-sm rounded"
                     />

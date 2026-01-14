@@ -8,7 +8,7 @@
 import { io, Socket } from 'socket.io-client';
 
 // WebSocket 服务器地址
-const SOCKET_URL = 'https://192.168.1.199:7002';
+const SOCKET_URL = 'https://localhost:7002';
 
 // 事件类型定义
 export interface SendMessageData {

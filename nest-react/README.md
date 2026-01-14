@@ -64,7 +64,7 @@ pnpm run build
 pnpm run start:prod
 ```
 
-后端服务将运行在: `https://192.168.1.199:7002`
+后端服务将运行在: `https://localhost:7002`
 
 ### 启动前端应用
 ```bash
