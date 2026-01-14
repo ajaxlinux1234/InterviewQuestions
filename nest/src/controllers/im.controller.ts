@@ -44,6 +44,24 @@ export class ImController {
   constructor(private readonly imService: ImService) {}
 
   /**
+   * 搜索用户（用于添加联系人）
+   * GET /api/im/users/search?keyword=xxx
+   */
+  @Get('users/search')
+  async searchUsers(
+    @Request() req,
+    @Query('keyword') keyword: string,
+  ) {
+    const userId = req.user.id;
+    
+    if (!keyword || keyword.trim().length === 0) {
+      throw new BadRequestException('搜索关键词不能为空');
+    }
+
+    return this.imService.searchUsers(keyword, userId);
+  }
+
+  /**
    * 获取联系人列表
    * GET /api/im/contacts
    */
@@ -70,12 +88,7 @@ export class ImController {
       throw new BadRequestException('不能添加自己为联系人');
     }
 
-    // 这里应该调用 ImService 的 addContact 方法
-    // 暂时返回成功消息
-    return {
-      success: true,
-      message: '联系人添加成功',
-    };
+    return this.imService.addContact(userId, contactUserId, remark);
   }
 
   /**
@@ -88,9 +101,8 @@ export class ImController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     const userId = req.user.id;
+    await this.imService.deleteContact(userId, id);
     
-    // 这里应该调用 ImService 的 deleteContact 方法
-    // 暂时返回成功消息
     return {
       success: true,
       message: '联系人删除成功',
@@ -153,6 +165,39 @@ export class ImController {
     return {
       success: true,
       message: '会话删除成功',
+    };
+  }
+
+  /**
+   * 清空会话列表
+   * DELETE /api/im/conversations
+   */
+  @Delete('conversations')
+  async clearConversations(@Request() req) {
+    const userId = req.user.id;
+    await this.imService.clearConversations(userId);
+    
+    return {
+      success: true,
+      message: '会话列表已清空',
+    };
+  }
+
+  /**
+   * 清空会话的所有消息
+   * DELETE /api/im/conversations/:id/messages
+   */
+  @Delete('conversations/:id/messages')
+  async clearConversationMessages(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const userId = req.user.id;
+    await this.imService.clearConversationMessages(id, userId);
+    
+    return {
+      success: true,
+      message: '聊天记录已清空',
     };
   }
 

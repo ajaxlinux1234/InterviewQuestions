@@ -41,7 +41,7 @@ export function MessageList({ messages }: MessageListProps) {
             key={message.id || message.tempId}
             className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
           >
-            <div className={`flex items-end space-x-2 max-w-[70%] ${isOwn ? 'flex-row-reverse space-x-reverse' : ''}`}>
+            <div className={`flex items-end space-x-2 max-w-[70%] ${isOwn ? 'flex-row-reverse space-x-reverse' : '!items-start'}`}>
               {/* 头像 */}
               {!isOwn && (
                 <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
@@ -74,16 +74,16 @@ export function MessageList({ messages }: MessageListProps) {
                   
                   {message.type === 'image' && message.mediaUrl && (
                     <img
-                      src={`https://localhost:7002${message.mediaUrl}`}
+                      src={`https://192.168.1.199:7002${message.mediaUrl}`}
                       alt="图片"
                       className="max-w-sm rounded cursor-pointer hover:opacity-90"
-                      onClick={() => window.open(`https://localhost:7002${message.mediaUrl}`, '_blank')}
+                      onClick={() => window.open(`https://192.168.1.199:7002${message.mediaUrl}`, '_blank')}
                     />
                   )}
                   
                   {message.type === 'video' && message.mediaUrl && (
                     <video
-                      src={`https://localhost:7002${message.mediaUrl}`}
+                      src={`https://192.168.1.199:7002${message.mediaUrl}`}
                       controls
                       className="max-w-sm rounded"
                     />

@@ -6,7 +6,7 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = 'https://localhost:7002/api/im';
+const API_BASE_URL = 'https://192.168.1.199:7002/api/im';
 
 // 创建 axios 实例
 const api = axios.create({
@@ -37,6 +37,13 @@ api.interceptors.response.use(
 );
 
 // ==================== 联系人相关 ====================
+
+/**
+ * 搜索用户
+ */
+export const searchUsers = (keyword: string) => {
+  return api.get('/users/search', { params: { keyword } });
+};
 
 /**
  * 获取联系人列表
@@ -99,6 +106,20 @@ export const createConversation = (data: CreateConversationData) => {
  */
 export const deleteConversation = (id: number) => {
   return api.delete(`/conversations/${id}`);
+};
+
+/**
+ * 清空会话列表
+ */
+export const clearConversations = () => {
+  return api.delete('/conversations');
+};
+
+/**
+ * 清空会话的所有消息
+ */
+export const clearConversationMessages = (conversationId: number) => {
+  return api.delete(`/conversations/${conversationId}/messages`);
 };
 
 // ==================== 消息相关 ====================

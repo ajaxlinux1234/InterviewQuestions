@@ -61,6 +61,148 @@ export class ImService {
   }
 
   /**
+   * 搜索用户（用于添加联系人）
+   */
+  async searchUsers(keyword: string, userId: number): Promise<any[]> {
+    this.logger.log(`用户 ${userId} 搜索用户: ${keyword}`);
+
+    const users = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id != :userId', { userId }) // 排除自己
+      .andWhere('(user.username LIKE :keyword OR user.email LIKE :keyword)', {
+        keyword: `%${keyword}%`,
+      })
+      .take(20) // 最多返回 20 个结果
+      .getMany();
+
+    // 检查哪些用户已经是联系人
+    const contactUserIds = await this.contactRepository
+      .createQueryBuilder('contact')
+      .where('contact.userId = :userId', { userId })
+      .andWhere('contact.status = :status', { status: 'normal' })
+      .select('contact.contactUserId')
+      .getRawMany()
+      .then(results => results.map(r => r.contact_contactUserId));
+
+    return users.map(user => ({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isContact: contactUserIds.includes(user.id),
+    }));
+  }
+
+  /**
+   * 添加联系人
+   */
+  async addContact(userId: number, contactUserId: number, remark?: string): Promise<ContactResponseDto> {
+    this.logger.log(`用户 ${userId} 添加联系人 ${contactUserId}`);
+
+    // 检查是否已经是联系人
+    const existingContact = await this.contactRepository.findOne({
+      where: { userId, contactUserId },
+    });
+
+    if (existingContact) {
+      if (existingContact.status === 'normal') {
+        throw new BadRequestException('该用户已经是您的联系人');
+      } else {
+        // 如果之前删除过，重新激活
+        existingContact.status = 'normal';
+        existingContact.remark = remark || existingContact.remark;
+        await this.contactRepository.save(existingContact);
+        
+        const contactUser = await this.userRepository.findOne({ where: { id: contactUserId } });
+        return {
+          id: existingContact.id,
+          userId: existingContact.userId,
+          contactUserId: existingContact.contactUserId,
+          contactUsername: contactUser.username,
+          contactEmail: contactUser.email,
+          remark: existingContact.remark,
+          status: existingContact.status,
+          createdAt: existingContact.createdAt,
+        };
+      }
+    }
+
+    // 验证联系人用户是否存在
+    const contactUser = await this.userRepository.findOne({ where: { id: contactUserId } });
+    if (!contactUser) {
+      throw new NotFoundException('用户不存在');
+    }
+
+    // 创建联系人
+    const contact = this.contactRepository.create({
+      userId,
+      contactUserId,
+      remark,
+      status: 'normal',
+    });
+
+    const savedContact = await this.contactRepository.save(contact);
+
+    return {
+      id: savedContact.id,
+      userId: savedContact.userId,
+      contactUserId: savedContact.contactUserId,
+      contactUsername: contactUser.username,
+      contactEmail: contactUser.email,
+      remark: savedContact.remark,
+      status: savedContact.status,
+      createdAt: savedContact.createdAt,
+    };
+  }
+
+  /**
+   * 删除联系人
+   */
+  async deleteContact(userId: number, contactId: number): Promise<void> {
+    this.logger.log(`用户 ${userId} 删除联系人 ${contactId}`);
+
+    const contact = await this.contactRepository.findOne({
+      where: { id: contactId, userId },
+    });
+
+    if (!contact) {
+      throw new NotFoundException('联系人不存在');
+    }
+
+    // 软删除：将状态改为 deleted
+    contact.status = 'deleted';
+    await this.contactRepository.save(contact);
+  }
+
+  /**
+   * 清空会话列表（软删除所有会话）
+   */
+  async clearConversations(userId: number): Promise<void> {
+    this.logger.log(`用户 ${userId} 清空会话列表`);
+
+    // 删除用户的所有会话成员记录
+    await this.conversationMemberRepository.delete({ userId });
+  }
+
+  /**
+   * 清空会话的所有消息
+   */
+  async clearConversationMessages(conversationId: number, userId: number): Promise<void> {
+    this.logger.log(`用户 ${userId} 清空会话 ${conversationId} 的所有消息`);
+
+    // 验证用户是否是会话成员
+    const member = await this.conversationMemberRepository.findOne({
+      where: { conversationId, userId },
+    });
+
+    if (!member) {
+      throw new NotFoundException('会话不存在或您不是会话成员');
+    }
+
+    // 删除该会话的所有消息
+    await this.messageRepository.delete({ conversationId });
+  }
+
+  /**
    * 获取会话列表
    */
   async getConversations(userId: number, queryDto: QueryConversationsDto): Promise<{

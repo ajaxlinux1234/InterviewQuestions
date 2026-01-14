@@ -3,13 +3,41 @@
  */
 
 import { Conversation } from '../stores/imStore';
+import { clearConversationMessages } from '../services/imApi';
+import { useState } from 'react';
 
 interface ConversationDetailProps {
   conversation: Conversation;
   onClose: () => void;
+  onMessagesCleared?: () => void; // 清空消息后的回调
 }
 
-export function ConversationDetail({ conversation, onClose }: ConversationDetailProps) {
+export function ConversationDetail({ conversation, onClose, onMessagesCleared }: ConversationDetailProps) {
+  const [isClearing, setIsClearing] = useState(false);
+
+  // 清空聊天记录
+  const handleClearMessages = async () => {
+    if (!window.confirm('确定要清空所有聊天记录吗？此操作不可恢复。')) {
+      return;
+    }
+
+    try {
+      setIsClearing(true);
+      await clearConversationMessages(conversation.id);
+      
+      // 通知父组件刷新消息列表
+      if (onMessagesCleared) {
+        onMessagesCleared();
+      }
+      
+      alert('聊天记录已清空');
+    } catch (error: any) {
+      console.error('清空聊天记录失败:', error);
+      alert(error.response?.data?.message || '清空聊天记录失败');
+    } finally {
+      setIsClearing(false);
+    }
+  };
   return (
     <div className="w-80 bg-white border-l border-gray-200 flex flex-col">
       {/* 头部 */}
@@ -82,12 +110,16 @@ export function ConversationDetail({ conversation, onClose }: ConversationDetail
             </div>
           </button>
           
-          <button className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+          <button 
+            onClick={handleClearMessages}
+            disabled={isClearing}
+            className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <div className="flex items-center space-x-3">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
-              <span>清空聊天记录</span>
+              <span>{isClearing ? '清空中...' : '清空聊天记录'}</span>
             </div>
           </button>
           

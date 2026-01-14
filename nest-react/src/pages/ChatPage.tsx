@@ -12,16 +12,18 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useImStore } from '../stores/imStore';
 import { socketService } from '../services/socketService';
-import { getContacts, getConversations, getMessages } from '../services/imApi';
+import { getContacts, getConversations, getMessages, clearConversations, createConversation } from '../services/imApi';
 import { ConversationList } from '../components/ConversationList';
 import { MessageList } from '../components/MessageList';
 import { MessageInput } from '../components/MessageInput';
 import { ConversationDetail } from '../components/ConversationDetail';
+import { AddContactModal } from '../components/AddContactModal';
 
 export function ChatPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'conversations' | 'contacts'>('conversations');
   const [showDetail, setShowDetail] = useState(false);
+  const [showAddContact, setShowAddContact] = useState(false);
   
   const {
     contacts,
@@ -37,7 +39,7 @@ export function ChatPage() {
   } = useImStore();
 
   // 获取联系人列表
-  const { data: contactsData } = useQuery({
+  const { data: contactsData, refetch: refetchContacts } = useQuery({
     queryKey: ['contacts'],
     queryFn: getContacts,
   });
@@ -197,6 +199,71 @@ export function ChatPage() {
     navigate('/dashboard');
   };
 
+  // 处理清空会话列表
+  const handleClearConversations = async () => {
+    if (!window.confirm('确定要清空所有会话吗？此操作不可恢复。')) {
+      return;
+    }
+
+    try {
+      await clearConversations();
+      setConversations([]);
+      setCurrentConversation(null);
+      setMessages([]);
+      refetchConversations();
+      alert('会话列表已清空');
+    } catch (error) {
+      console.error('清空会话失败:', error);
+      alert('清空会话失败，请重试');
+    }
+  };
+
+  // 处理清空聊天记录
+  const handleMessagesCleared = () => {
+    // 清空当前会话的消息列表
+    setMessages([]);
+  };
+
+  // 处理点击联系人 - 打开与该联系人的聊天
+  const handleContactClick = async (contact: any) => {
+    try {
+      // 查找是否已存在与该联系人的私聊会话
+      const existingConversation = conversations.find(
+        (conv) =>
+          conv.type === 'private' &&
+          conv.members?.some((m) => m.userId === contact.contactUserId)
+      );
+
+      if (existingConversation) {
+        // 如果已存在会话,直接选中
+        setCurrentConversation(existingConversation);
+        setActiveTab('conversations');
+      } else {
+        // 如果不存在会话,创建新的私聊会话
+        const response = await createConversation({
+          type: 'private',
+          memberIds: [contact.contactUserId],
+        });
+
+        // 刷新会话列表
+        await refetchConversations();
+
+        // 选中新创建的会话
+        setCurrentConversation(response as any);
+        setActiveTab('conversations');
+      }
+    } catch (error) {
+      console.error('打开聊天失败:', error);
+      alert('打开聊天失败，请重试');
+    }
+  };
+
+  // 处理添加联系人成功
+  const handleAddContactSuccess = () => {
+    refetchContacts();
+    refetchConversations();
+  };
+
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       {/* 顶部导航栏 */}
@@ -247,6 +314,31 @@ export function ChatPage() {
             </button>
           </div>
 
+          {/* 操作按钮栏 */}
+          <div className="p-3 border-b border-gray-200 flex items-center justify-between">
+            {activeTab === 'conversations' ? (
+              <>
+                <span className="text-sm text-gray-600">会话管理</span>
+                <button
+                  onClick={handleClearConversations}
+                  className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded"
+                >
+                  清空列表
+                </button>
+              </>
+            ) : (
+              <>
+                <span className="text-sm text-gray-600">联系人管理</span>
+                <button
+                  onClick={() => setShowAddContact(true)}
+                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  + 添加联系人
+                </button>
+              </>
+            )}
+          </div>
+
           {/* 列表内容 */}
           <div className="flex-1 overflow-y-auto">
             {activeTab === 'conversations' ? (
@@ -266,6 +358,7 @@ export function ChatPage() {
                     {contacts.map((contact) => (
                       <div
                         key={contact.id}
+                        onClick={() => handleContactClick(contact)}
                         className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer"
                       >
                         <div className="flex items-center space-x-3">
@@ -342,9 +435,18 @@ export function ChatPage() {
           <ConversationDetail
             conversation={currentConversation}
             onClose={() => setShowDetail(false)}
+            onMessagesCleared={handleMessagesCleared}
           />
         )}
       </div>
+
+      {/* 添加联系人模态框 */}
+      {showAddContact && (
+        <AddContactModal
+          onClose={() => setShowAddContact(false)}
+          onSuccess={handleAddContactSuccess}
+        />
+      )}
     </div>
   );
 }
