@@ -412,7 +412,9 @@ class WebRTCService {
    * 设置状态变化回调
    */
   onStateChange(callback: (state: CallState) => void) {
-    console.log('设置状态变化回调, 当前回调是否存在:', !!this.onStateChangeCallback);
+    console.log('=== onStateChange 被调用 ===');
+    console.log('当前回调是否存在:', !!this.onStateChangeCallback);
+    
     this.onStateChangeCallback = callback;
     console.log('状态变化回调已设置');
   }

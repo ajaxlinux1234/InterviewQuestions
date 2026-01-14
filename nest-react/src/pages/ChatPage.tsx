@@ -7,7 +7,7 @@
  * - 右侧：会话详情
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useImStore } from '../stores/imStore';
@@ -27,6 +27,9 @@ export function ChatPage() {
   const [showDetail, setShowDetail] = useState(false);
   const [showAddContact, setShowAddContact] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
+  
+  // 使用 ref 来跟踪是否已经初始化过 WebRTC
+  const webrtcInitializedRef = useRef(false);
   
   // 监控 showCallModal 状态变化
   useEffect(() => {
@@ -89,6 +92,12 @@ export function ChatPage() {
 
   // 初始化 WebSocket 连接（只在组件挂载时执行一次）
   useEffect(() => {
+    // 使用 ref 防止 Strict Mode 导致的重复初始化
+    if (webrtcInitializedRef.current) {
+      console.log('WebRTC 已初始化（通过 ref 检测），跳过');
+      return;
+    }
+    
     // 从 localStorage 直接读取 token（不依赖 Zustand）
     let token = localStorage.getItem('token');
     
@@ -119,26 +128,25 @@ export function ChatPage() {
 
     // 注册 WebRTC 状态变化监听器
     console.log('=== 注册 WebRTC 状态变化监听器 ===');
-    console.log('当前 showCallModal 状态:', showCallModal);
     
     webrtcService.onStateChange((state) => {
       console.log('=== WebRTC 状态变化回调被触发 ===');
       console.log('新状态:', state);
-      console.log('当前 showCallModal:', showCallModal);
       
       // 当收到通话邀请或通话状态变化时,显示通话模态框
       if (state.status !== 'idle') {
-        console.log('准备显示通话模态框, 调用 setShowCallModal(true)');
+        console.log('准备显示通话模态框');
         setShowCallModal(true);
-        console.log('setShowCallModal(true) 已调用');
       } else {
-        console.log('准备隐藏通话模态框, 调用 setShowCallModal(false)');
+        console.log('准备隐藏通话模态框');
         setShowCallModal(false);
-        console.log('setShowCallModal(false) 已调用');
       }
     });
     
     console.log('=== WebRTC 状态变化监听器注册完成 ===');
+    
+    // 标记已初始化
+    webrtcInitializedRef.current = true;
 
     // 监听新消息
     const handleNewMessage = (message: any) => {
