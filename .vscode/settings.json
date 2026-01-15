@@ -1,9 +1,7 @@
 {
   "editor.tabSize": 2,
   "editor.insertSpaces": false,
-  "cSpell.words": [
-    "apipay",
-    "Modernizr",
-    "pinchzoom"
-  ]
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "cSpell.words": ["apipay", "Modernizr", "pinchzoom"]
 }
