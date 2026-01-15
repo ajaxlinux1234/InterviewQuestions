@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, LogOut, Shield, Clock, Mail, Settings, Package, MessageCircle } from 'lucide-react';
+import { User, LogOut, Shield, Clock, Mail, Settings, Package, MessageCircle, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -169,6 +169,26 @@ export const DashboardPage: React.FC = () => {
                         </p>
                         <p className="text-sm text-green-600 group-hover:text-green-700">
                           实时聊天和消息
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                  
+                  <Link
+                    to="/ai-chat"
+                    className="bg-gradient-to-br from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 p-4 rounded-lg transition-colors group border border-purple-200"
+                  >
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <Sparkles className="w-6 h-6 text-purple-600 group-hover:text-purple-700" />
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-purple-800 group-hover:text-purple-900 flex items-center">
+                          AI 助手
+                          <span className="ml-2 px-2 py-0.5 text-xs bg-purple-200 text-purple-800 rounded-full">新</span>
+                        </p>
+                        <p className="text-sm text-purple-600 group-hover:text-purple-700">
+                          智能对话和问答
                         </p>
                       </div>
                     </div>

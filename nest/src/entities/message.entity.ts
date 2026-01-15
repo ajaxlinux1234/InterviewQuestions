@@ -7,13 +7,13 @@ export class Message {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   id: number;
 
-  @Column({ name: 'conversation_id', type: 'bigint' })
+  @Column({ name: 'conversation_id', type: 'bigint', nullable: true })
   conversationId: number;
 
-  @Column({ name: 'sender_id', type: 'bigint' })
+  @Column({ name: 'sender_id', type: 'bigint', nullable: true })
   senderId: number;
 
-  @Column({ type: 'enum', enum: ['text', 'image', 'video', 'file', 'system'] })
+  @Column({ type: 'enum', enum: ['text', 'image', 'video', 'file', 'system', 'ai_prompt', 'ai_response'] })
   type: string;
 
   @Column({ type: 'text', nullable: true })
@@ -31,6 +31,19 @@ export class Message {
   @Column({ name: 'reply_to_message_id', type: 'bigint', nullable: true })
   replyToMessageId: number;
 
+  @Column({ name: 'ai_prompt_id', type: 'bigint', nullable: true })
+  aiPromptId: number;
+
+  @Column({ type: 'json', nullable: true })
+  metadata: {
+    model?: string;
+    tokenCount?: number;
+    streamDuration?: number;
+    responseLength?: number;
+    timestamp?: number;
+    [key: string]: any;
+  };
+
   @Column({ type: 'enum', enum: ['sending', 'sent', 'delivered', 'read', 'failed'], default: 'sent' })
   status: string;
 
@@ -44,7 +57,7 @@ export class Message {
   @JoinColumn({ name: 'conversation_id' })
   conversation: Conversation;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'sender_id' })
   sender: User;
 }

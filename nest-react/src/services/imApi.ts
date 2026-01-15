@@ -6,7 +6,7 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = 'https://localhost:7002/api/im';
+const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL || 'https://localhost:7002'}/api/im`;
 
 // 创建 axios 实例
 const api = axios.create({

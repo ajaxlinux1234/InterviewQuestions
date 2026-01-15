@@ -101,7 +101,7 @@ async function bootstrap() {
   // 输出启动信息
   const protocol = httpsOptions ? 'https' : 'http';
   console.log('✅ NestJS 应用已就绪，HTTP/2.0 支持已启用');
-  console.log(`🌐 服务器运行在: ${protocol}://localhost:${port}`);
+  console.log(`🌐 服务器运行在: ${protocol}://0.0.0.0:${port}`);
   
   if (httpsOptions) {
     console.log('📡 HTTP/2.0 功能已启用:');

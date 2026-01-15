@@ -18,6 +18,8 @@
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { HomeController } from './controllers/home.controller';
 import { UserController, PushController } from './controllers/user.controller';
@@ -26,6 +28,7 @@ import { RedisService } from './services/redis.service';
 import { AuthModule } from './auth/auth.module';
 import { InstrumentModule } from './modules/instrument.module';
 import { ImModule } from './modules/im.module';
+import { AiModule } from './modules/ai/ai.module';
 import { User } from './entities/user.entity';
 import { UserToken } from './entities/user-token.entity';
 import { Instrument } from './entities/instrument.entity';
@@ -35,6 +38,7 @@ import { Contact } from './entities/contact.entity';
 import { Conversation } from './entities/conversation.entity';
 import { ConversationMember } from './entities/conversation-member.entity';
 import { Message } from './entities/message.entity';
+import { AiRequestLog } from './entities/ai-request-log.entity';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 
 /**
@@ -47,6 +51,26 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
  */
 @Module({
   imports: [
+    // 配置模块 - 全局加载环境变量
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    
+    // 速率限制模块 - 全局配置
+    ThrottlerModule.forRoot([
+      {
+        name: 'default',
+        ttl: 60000, // 1分钟
+        limit: 100, // 全局限制：100 请求/分钟
+      },
+      {
+        name: 'ai',
+        ttl: 60000, // 1分钟
+        limit: 10,  // AI 限制：10 请求/分钟
+      },
+    ]),
+    
     // TypeORM 数据库配置
     // TypeORM 是 TypeScript 的 ORM 库，支持多种数据库
     TypeOrmModule.forRoot({
@@ -66,12 +90,11 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
         Conversation,         // IM 会话表
         ConversationMember,   // IM 会话成员表
         Message,              // IM 消息表
+        AiRequestLog,         // AI 请求日志表
       ], // 实体类列表（对应数据库表）
       synchronize: false,                                    // 是否自动同步数据库结构（生产环境应设为 false）
       extra: {
         connectionLimit: 5,    // 连接池最大连接数
-        acquireTimeout: 30000, // 获取连接超时时间（毫秒）
-        timeout: 30000,        // 查询超时时间（毫秒）
       },
     }),
     
@@ -83,6 +106,9 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
     
     // IM 即时通讯模块 - 处理实时消息、会话、联系人管理
     ImModule,
+    
+    // AI 聊天模块 - 处理 AI 对话和流式响应
+    AiModule,
   ],
   
   // 控制器列表
