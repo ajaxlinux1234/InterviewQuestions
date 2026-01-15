@@ -39,6 +39,7 @@ import { Conversation } from './entities/conversation.entity';
 import { ConversationMember } from './entities/conversation-member.entity';
 import { Message } from './entities/message.entity';
 import { AiRequestLog } from './entities/ai-request-log.entity';
+import { AiConversation } from './entities/ai-conversation.entity';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 
 /**
@@ -91,6 +92,7 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
         ConversationMember,   // IM 会话成员表
         Message,              // IM 消息表
         AiRequestLog,         // AI 请求日志表
+        AiConversation,       // AI 会话表
       ], // 实体类列表（对应数据库表）
       synchronize: false,                                    // 是否自动同步数据库结构（生产环境应设为 false）
       extra: {

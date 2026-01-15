@@ -15,11 +15,12 @@ import { AuditLoggerService } from './audit-logger.service';
 import { ContentFilterService } from './content-filter.service';
 import { Message } from '../../entities/message.entity';
 import { AiRequestLog } from '../../entities/ai-request-log.entity';
+import { AiConversation } from '../../entities/ai-conversation.entity';
 
 @Module({
   imports: [
     // TypeORM 模块，注册需要的实体
-    TypeOrmModule.forFeature([Message, AiRequestLog]),
+    TypeOrmModule.forFeature([Message, AiRequestLog, AiConversation]),
     // 导入 AuthModule 以使用 AuthGuard
     AuthModule,
   ],

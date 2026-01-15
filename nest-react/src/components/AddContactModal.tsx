@@ -53,7 +53,7 @@ export function AddContactModal({ onClose, onSuccess }: AddContactModalProps) {
   // 发起聊天
   const handleStartChat = async (userId: number) => {
     try {
-      const conversation = await createConversation({
+      await createConversation({
         type: 'private',
         memberIds: [userId],
       });

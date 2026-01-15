@@ -1,10 +1,16 @@
 /**
  * AI 消息渲染组件
  * 
- * 用于渲染 AI 消息，支持流式渲染和停止功能
+ * 用于渲染 AI 消息，支持流式渲染、Markdown 格式和代码高亮
  */
 
 import { useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
+import 'highlight.js/styles/github-dark.css'; // 代码高亮样式
+import '../styles/markdown.css'; // Markdown 自定义样式
 
 export interface AiMessage {
   id?: number;
@@ -81,9 +87,74 @@ export function AiMessageRenderer({ message, onStop }: AiMessageRendererProps) {
                 : 'bg-gradient-to-br from-purple-50 to-blue-50 text-gray-900 border border-purple-200'
             }`}
           >
-            {/* 消息内容 */}
-            <div className="whitespace-pre-wrap break-words">
-              {message.content}
+            {/* 消息内容 - 使用 Markdown 渲染 */}
+            <div className="prose prose-sm max-w-none">
+              {isPrompt ? (
+                // 用户消息：纯文本显示
+                <div className="whitespace-pre-wrap break-words">
+                  {message.content}
+                </div>
+              ) : (
+                // AI 响应：Markdown 渲染
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeHighlight, rehypeRaw]}
+                  components={{
+                    // 自定义代码块样式
+                    code(props) {
+                      const { node, className, children, ...rest } = props;
+                      const match = /language-(\w+)/.exec(className || '');
+                      const isInline = !match;
+                      
+                      return isInline ? (
+                        <code className="bg-gray-200 text-red-600 px-1 py-0.5 rounded text-sm" {...rest}>
+                          {children}
+                        </code>
+                      ) : (
+                        <div className="relative">
+                          {match && (
+                            <div className="absolute top-0 right-0 text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-bl">
+                              {match[1]}
+                            </div>
+                          )}
+                          <pre className={className}>
+                            <code className={className} {...rest}>
+                              {children}
+                            </code>
+                          </pre>
+                        </div>
+                      );
+                    },
+                    // 自定义链接样式
+                    a(props) {
+                      const { node, children, ...rest } = props;
+                      return (
+                        <a
+                          className="text-blue-600 hover:text-blue-800 underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          {...rest}
+                        >
+                          {children}
+                        </a>
+                      );
+                    },
+                    // 自定义表格样式
+                    table(props) {
+                      const { node, children, ...rest } = props;
+                      return (
+                        <div className="overflow-x-auto">
+                          <table className="min-w-full divide-y divide-gray-300" {...rest}>
+                            {children}
+                          </table>
+                        </div>
+                      );
+                    },
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
+              )}
               
               {/* 流式输入指示器 */}
               {isStreaming && (

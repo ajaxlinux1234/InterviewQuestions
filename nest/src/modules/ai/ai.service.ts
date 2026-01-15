@@ -12,6 +12,7 @@ import { LlmClient } from './llm-client';
 import { AuditLoggerService } from './audit-logger.service';
 import { ContentFilterService } from './content-filter.service';
 import { Message } from '../../entities/message.entity';
+import { AiConversation } from '../../entities/ai-conversation.entity';
 
 export interface AiStreamChunk {
   type: 'chunk' | 'done' | 'error';
@@ -40,6 +41,8 @@ export class AiService {
     private readonly llmClient: LlmClient,
     @InjectRepository(Message)
     private readonly messageRepository: Repository<Message>,
+    @InjectRepository(AiConversation)
+    private readonly conversationRepository: Repository<AiConversation>,
     private readonly configService: ConfigService,
     private readonly auditLogger: AuditLoggerService,
     private readonly contentFilter: ContentFilterService,
@@ -52,7 +55,7 @@ export class AiService {
    * 
    * @param userId 用户 ID
    * @param prompt 用户提示词
-   * @param conversationId 会话 ID（可选）
+   * @param conversationId AI 会话 ID（可选）
    * @returns AsyncGenerator<AiStreamChunk> 流式响应块
    */
   async *streamResponse(
@@ -229,18 +232,19 @@ export class AiService {
    * 
    * @param userId 用户 ID
    * @param prompt 提示词
-   * @param conversationId 会话 ID
+   * @param aiConversationId AI 会话 ID
    * @returns Promise<number> 消息 ID
    */
   private async savePromptMessage(
     userId: number,
     prompt: string,
-    conversationId?: number,
+    aiConversationId?: number,
   ): Promise<number> {
     try {
       const message = this.messageRepository.create({
         senderId: userId,
-        conversationId: conversationId || null,
+        conversationId: null, // IM 会话 ID，AI 消息不使用
+        aiConversationId: aiConversationId || null,
         content: prompt,
         type: 'ai_prompt',
         metadata: {
@@ -251,6 +255,12 @@ export class AiService {
 
       const savedMessage = await this.messageRepository.save(message);
       this.logger.debug(`Prompt message saved with ID: ${savedMessage.id}`);
+
+      // 如果有会话 ID，自动生成标题和更新计数
+      if (aiConversationId) {
+        await this.autoGenerateTitle(aiConversationId, prompt);
+        await this.updateMessageCount(aiConversationId);
+      }
 
       return savedMessage.id;
     } catch (error) {
@@ -264,20 +274,21 @@ export class AiService {
    * 
    * @param userId 用户 ID
    * @param response AI 响应内容
-   * @param conversationId 会话 ID
+   * @param aiConversationId AI 会话 ID
    * @param promptMessageId 关联的提示消息 ID
    * @returns Promise<number> 消息 ID
    */
   private async saveResponseMessage(
     userId: number,
     response: string,
-    conversationId: number | undefined,
+    aiConversationId: number | undefined,
     promptMessageId: number,
   ): Promise<number> {
     try {
       const message = this.messageRepository.create({
         senderId: null, // AI 消息没有发送者
-        conversationId: conversationId || null,
+        conversationId: null, // IM 会话 ID，AI 消息不使用
+        aiConversationId: aiConversationId || null,
         content: response,
         type: 'ai_response',
         aiPromptId: promptMessageId,
@@ -290,6 +301,11 @@ export class AiService {
 
       const savedMessage = await this.messageRepository.save(message);
       this.logger.debug(`Response message saved with ID: ${savedMessage.id}`);
+
+      // 如果有会话 ID，更新消息计数
+      if (aiConversationId) {
+        await this.updateMessageCount(aiConversationId);
+      }
 
       return savedMessage.id;
     } catch (error) {
@@ -476,6 +492,248 @@ export class AiService {
         hasApiKey: false,
         cacheSize: this.requestCache.size,
       };
+    }
+  }
+
+  /**
+   * 创建新的 AI 会话
+   * 
+   * @param userId 用户 ID
+   * @param title 会话标题（可选）
+   * @returns Promise<AiConversation> 创建的会话
+   */
+  async createConversation(userId: number, title?: string): Promise<AiConversation> {
+    try {
+      const conversation = this.conversationRepository.create({
+        userId,
+        title: title || '新对话',
+        status: 'active',
+        messageCount: 0,
+        metadata: {
+          model: this.configService.get<string>('GROQ_MODEL'),
+        },
+      });
+
+      const saved = await this.conversationRepository.save(conversation);
+      this.logger.log(`Created AI conversation ${saved.id} for user ${userId}`);
+
+      return saved;
+    } catch (error) {
+      this.logger.error(`Failed to create AI conversation: ${error.message}`, error.stack);
+      throw new Error('Failed to create conversation');
+    }
+  }
+
+  /**
+   * 获取用户的 AI 会话列表
+   * 
+   * @param userId 用户 ID
+   * @param status 会话状态（可选）
+   * @param limit 返回数量限制
+   * @returns Promise<AiConversation[]> 会话列表
+   */
+  async getUserConversations(
+    userId: number,
+    status: 'active' | 'archived' | 'deleted' = 'active',
+    limit: number = 50,
+  ): Promise<AiConversation[]> {
+    try {
+      const conversations = await this.conversationRepository.find({
+        where: { 
+          userId, 
+          status
+        },
+        order: { updatedAt: 'DESC' },
+        take: limit,
+      });
+
+      this.logger.debug(`Retrieved ${conversations.length} conversations for user ${userId}`);
+      return conversations;
+    } catch (error) {
+      this.logger.error(`Failed to get conversations: ${error.message}`, error.stack);
+      throw new Error('Failed to get conversations');
+    }
+  }
+
+  /**
+   * 获取会话详情（包含消息）
+   * 
+   * @param conversationId 会话 ID
+   * @param userId 用户 ID
+   * @param limit 消息数量限制
+   * @returns Promise<AiConversation> 会话详情
+   */
+  async getConversationDetail(
+    conversationId: number,
+    userId: number,
+    limit: number = 100,
+  ): Promise<AiConversation> {
+    try {
+      const conversation = await this.conversationRepository.findOne({
+        where: { id: conversationId, userId },
+        relations: ['messages'],
+      });
+
+      if (!conversation) {
+        throw new BadRequestException('Conversation not found');
+      }
+
+      // 限制返回的消息数量，按时间倒序
+      if (conversation.messages) {
+        conversation.messages = conversation.messages
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+          .slice(0, limit)
+          .reverse(); // 最终按时间正序返回
+      }
+
+      return conversation;
+    } catch (error) {
+      this.logger.error(`Failed to get conversation detail: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * 更新会话标题
+   * 
+   * @param conversationId 会话 ID
+   * @param userId 用户 ID
+   * @param title 新标题
+   * @returns Promise<AiConversation> 更新后的会话
+   */
+  async updateConversationTitle(
+    conversationId: number,
+    userId: number,
+    title: string,
+  ): Promise<AiConversation> {
+    try {
+      const conversation = await this.conversationRepository.findOne({
+        where: { id: conversationId, userId },
+      });
+
+      if (!conversation) {
+        throw new BadRequestException('Conversation not found');
+      }
+
+      conversation.title = title;
+      const updated = await this.conversationRepository.save(conversation);
+
+      this.logger.log(`Updated conversation ${conversationId} title to: ${title}`);
+      return updated;
+    } catch (error) {
+      this.logger.error(`Failed to update conversation title: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * 删除会话（软删除）
+   * 
+   * @param conversationId 会话 ID
+   * @param userId 用户 ID
+   * @returns Promise<boolean> 是否成功
+   */
+  async deleteConversation(conversationId: number, userId: number): Promise<boolean> {
+    try {
+      const conversation = await this.conversationRepository.findOne({
+        where: { id: conversationId, userId },
+      });
+
+      if (!conversation) {
+        throw new BadRequestException('Conversation not found');
+      }
+
+      conversation.status = 'deleted';
+      await this.conversationRepository.save(conversation);
+
+      this.logger.log(`Deleted conversation ${conversationId} for user ${userId}`);
+      return true;
+    } catch (error) {
+      this.logger.error(`Failed to delete conversation: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * 归档会话
+   * 
+   * @param conversationId 会话 ID
+   * @param userId 用户 ID
+   * @returns Promise<boolean> 是否成功
+   */
+  async archiveConversation(conversationId: number, userId: number): Promise<boolean> {
+    try {
+      const conversation = await this.conversationRepository.findOne({
+        where: { id: conversationId, userId },
+      });
+
+      if (!conversation) {
+        throw new BadRequestException('Conversation not found');
+      }
+
+      conversation.status = 'archived';
+      await this.conversationRepository.save(conversation);
+
+      this.logger.log(`Archived conversation ${conversationId} for user ${userId}`);
+      return true;
+    } catch (error) {
+      this.logger.error(`Failed to archive conversation: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  /**
+   * 自动生成会话标题（基于第一条提示）
+   * 
+   * @param conversationId 会话 ID
+   * @param prompt 用户提示词
+   */
+  private async autoGenerateTitle(conversationId: number, prompt: string): Promise<void> {
+    try {
+      const conversation = await this.conversationRepository.findOne({
+        where: { id: conversationId },
+      });
+
+      if (!conversation || conversation.title !== '新对话') {
+        return; // 已有标题，不覆盖
+      }
+
+      // 使用提示词的前 50 个字符作为标题
+      const title = prompt.length > 50 ? prompt.substring(0, 50) + '...' : prompt;
+      conversation.title = title;
+      await this.conversationRepository.save(conversation);
+
+      this.logger.debug(`Auto-generated title for conversation ${conversationId}: ${title}`);
+    } catch (error) {
+      this.logger.error(`Failed to auto-generate title: ${error.message}`);
+      // 不抛出错误，标题生成失败不影响主流程
+    }
+  }
+
+  /**
+   * 更新会话的消息计数
+   * 
+   * @param conversationId 会话 ID
+   */
+  private async updateMessageCount(conversationId: number): Promise<void> {
+    try {
+      const conversation = await this.conversationRepository.findOne({
+        where: { id: conversationId },
+      });
+
+      if (!conversation) {
+        return;
+      }
+
+      const count = await this.messageRepository.count({
+        where: { aiConversationId: conversationId },
+      });
+
+      conversation.messageCount = count;
+      await this.conversationRepository.save(conversation);
+    } catch (error) {
+      this.logger.error(`Failed to update message count: ${error.message}`);
+      // 不抛出错误，计数更新失败不影响主流程
     }
   }
 }

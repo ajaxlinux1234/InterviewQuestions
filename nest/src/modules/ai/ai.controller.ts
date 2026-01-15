@@ -8,8 +8,12 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
+  Delete,
+  Param,
   Query,
   Request,
+  Body,
   UseGuards,
   BadRequestException,
   InternalServerErrorException,
@@ -311,5 +315,251 @@ export class AiController {
     }
 
     return 'AI service is temporarily unavailable. Please try again later.';
+  }
+
+  /**
+   * 创建新的 AI 会话
+   * 
+   * @param req 请求对象
+   * @param body 请求体
+   * @returns 创建的会话
+   */
+  @Post('conversations')
+  @Throttle({ default: { limit: 20, ttl: 60000 } }) // 20 请求/分钟
+  async createConversation(
+    @Request() req: any,
+    @Body() body: { title?: string },
+  ) {
+    const userId = req?.user?.id;
+
+    if (!userId) {
+      throw new UnauthorizedException('User authentication required');
+    }
+
+    try {
+      const conversation = await this.aiService.createConversation(userId, body.title);
+
+      return {
+        success: true,
+        data: conversation,
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      this.logger.error(`Failed to create conversation: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('Failed to create conversation');
+    }
+  }
+
+  /**
+   * 获取用户的 AI 会话列表
+   * 
+   * @param req 请求对象
+   * @param status 会话状态
+   * @param limit 返回数量限制
+   * @returns 会话列表
+   */
+  @Get('conversations')
+  @Throttle({ default: { limit: 30, ttl: 60000 } }) // 30 请求/分钟
+  async getConversations(
+    @Request() req: any,
+    @Query('status') status?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const userId = req?.user?.id;
+
+    if (!userId) {
+      throw new UnauthorizedException('User authentication required');
+    }
+
+    try {
+      // 验证 status 参数
+      const validStatus: 'active' | 'archived' | 'deleted' = 
+        (status === 'active' || status === 'archived' || status === 'deleted') 
+          ? status 
+          : 'active';
+
+      const conversations = await this.aiService.getUserConversations(
+        userId,
+        validStatus,
+        limit ? parseInt(limit, 10) : 50,
+      );
+
+      return {
+        success: true,
+        data: conversations,
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get conversations: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('Failed to get conversations');
+    }
+  }
+
+  /**
+   * 获取会话详情（包含消息历史）
+   * 
+   * @param conversationId 会话 ID
+   * @param req 请求对象
+   * @param limit 消息数量限制
+   * @returns 会话详情
+   */
+  @Get('conversations/:id')
+  @Throttle({ default: { limit: 30, ttl: 60000 } }) // 30 请求/分钟
+  async getConversationDetail(
+    @Param('id') conversationId: string,
+    @Request() req: any,
+    @Query('limit') limit?: string,
+  ) {
+    const userId = req?.user?.id;
+
+    if (!userId) {
+      throw new UnauthorizedException('User authentication required');
+    }
+
+    try {
+      const conversation = await this.aiService.getConversationDetail(
+        parseInt(conversationId, 10),
+        userId,
+        limit ? parseInt(limit, 10) : 100,
+      );
+
+      return {
+        success: true,
+        data: conversation,
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get conversation detail: ${error.message}`, error.stack);
+      
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      
+      throw new InternalServerErrorException('Failed to get conversation detail');
+    }
+  }
+
+  /**
+   * 更新会话标题
+   * 
+   * @param conversationId 会话 ID
+   * @param req 请求对象
+   * @param body 请求体
+   * @returns 更新后的会话
+   */
+  @Patch('conversations/:id')
+  @Throttle({ default: { limit: 20, ttl: 60000 } }) // 20 请求/分钟
+  async updateConversation(
+    @Param('id') conversationId: string,
+    @Request() req: any,
+    @Body() body: { title: string },
+  ) {
+    const userId = req?.user?.id;
+
+    if (!userId) {
+      throw new UnauthorizedException('User authentication required');
+    }
+
+    if (!body.title) {
+      throw new BadRequestException('Title is required');
+    }
+
+    try {
+      const conversation = await this.aiService.updateConversationTitle(
+        parseInt(conversationId, 10),
+        userId,
+        body.title,
+      );
+
+      return {
+        success: true,
+        data: conversation,
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      this.logger.error(`Failed to update conversation: ${error.message}`, error.stack);
+      
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      
+      throw new InternalServerErrorException('Failed to update conversation');
+    }
+  }
+
+  /**
+   * 删除会话
+   * 
+   * @param conversationId 会话 ID
+   * @param req 请求对象
+   * @returns 删除结果
+   */
+  @Delete('conversations/:id')
+  @Throttle({ default: { limit: 20, ttl: 60000 } }) // 20 请求/分钟
+  async deleteConversation(
+    @Param('id') conversationId: string,
+    @Request() req: any,
+  ) {
+    const userId = req?.user?.id;
+
+    if (!userId) {
+      throw new UnauthorizedException('User authentication required');
+    }
+
+    try {
+      await this.aiService.deleteConversation(parseInt(conversationId, 10), userId);
+
+      return {
+        success: true,
+        message: 'Conversation deleted successfully',
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      this.logger.error(`Failed to delete conversation: ${error.message}`, error.stack);
+      
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      
+      throw new InternalServerErrorException('Failed to delete conversation');
+    }
+  }
+
+  /**
+   * 归档会话
+   * 
+   * @param conversationId 会话 ID
+   * @param req 请求对象
+   * @returns 归档结果
+   */
+  @Post('conversations/:id/archive')
+  @Throttle({ default: { limit: 20, ttl: 60000 } }) // 20 请求/分钟
+  async archiveConversation(
+    @Param('id') conversationId: string,
+    @Request() req: any,
+  ) {
+    const userId = req?.user?.id;
+
+    if (!userId) {
+      throw new UnauthorizedException('User authentication required');
+    }
+
+    try {
+      await this.aiService.archiveConversation(parseInt(conversationId, 10), userId);
+
+      return {
+        success: true,
+        message: 'Conversation archived successfully',
+        timestamp: Date.now(),
+      };
+    } catch (error) {
+      this.logger.error(`Failed to archive conversation: ${error.message}`, error.stack);
+      
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      
+      throw new InternalServerErrorException('Failed to archive conversation');
+    }
   }
 }

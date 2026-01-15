@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Conversation } from './conversation.entity';
 import { User } from './user.entity';
+import { AiConversation } from './ai-conversation.entity';
 
 @Entity('messages')
 export class Message {
@@ -34,6 +35,9 @@ export class Message {
   @Column({ name: 'ai_prompt_id', type: 'bigint', nullable: true })
   aiPromptId: number;
 
+  @Column({ name: 'ai_conversation_id', type: 'bigint', nullable: true })
+  aiConversationId: number;
+
   @Column({ type: 'json', nullable: true })
   metadata: {
     model?: string;
@@ -60,4 +64,8 @@ export class Message {
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'sender_id' })
   sender: User;
+
+  @ManyToOne(() => AiConversation, { nullable: true })
+  @JoinColumn({ name: 'ai_conversation_id' })
+  aiConversation: AiConversation;
 }
