@@ -5,7 +5,7 @@
  */
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:7002";
+  process.env.REACT_APP_API_BASE_URL || "http://47.94.128.228:7002";
 
 export interface AiConversation {
   id: number;

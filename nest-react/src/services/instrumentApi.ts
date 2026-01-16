@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:7002";
+  process.env.REACT_APP_API_BASE_URL || "http://47.94.128.228:7002";
 
 // 创建 axios 实例
 const api = axios.create({

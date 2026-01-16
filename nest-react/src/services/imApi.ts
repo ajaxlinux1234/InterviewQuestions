@@ -1,12 +1,14 @@
 /**
  * IM API 服务
- * 
+ *
  * 提供与后端 IM REST API 的交互接口
  */
 
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:7002'}/api/im`;
+const API_BASE_URL = `${
+  process.env.REACT_APP_API_BASE_URL || "http://47.94.128.228:7002"
+}/api/im`;
 
 // 创建 axios 实例
 const api = axios.create({
@@ -15,7 +17,7 @@ const api = axios.create({
 
 // 请求拦截器 - 添加 token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -28,9 +30,9 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token 过期，跳转到登录页
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
@@ -42,21 +44,21 @@ api.interceptors.response.use(
  * 搜索用户
  */
 export const searchUsers = (keyword: string) => {
-  return api.get('/users/search', { params: { keyword } });
+  return api.get("/users/search", { params: { keyword } });
 };
 
 /**
  * 获取联系人列表
  */
 export const getContacts = () => {
-  return api.get('/contacts');
+  return api.get("/contacts");
 };
 
 /**
  * 添加联系人
  */
 export const addContact = (contactUserId: number, remark?: string) => {
-  return api.post('/contacts', { contactUserId, remark });
+  return api.post("/contacts", { contactUserId, remark });
 };
 
 /**
@@ -77,7 +79,7 @@ export interface GetConversationsParams {
  * 获取会话列表
  */
 export const getConversations = (params?: GetConversationsParams) => {
-  return api.get('/conversations', { params });
+  return api.get("/conversations", { params });
 };
 
 /**
@@ -88,7 +90,7 @@ export const getConversationDetail = (id: number) => {
 };
 
 export interface CreateConversationData {
-  type: 'private' | 'group';
+  type: "private" | "group";
   name?: string;
   avatar?: string;
   memberIds: number[];
@@ -98,7 +100,7 @@ export interface CreateConversationData {
  * 创建会话
  */
 export const createConversation = (data: CreateConversationData) => {
-  return api.post('/conversations', data);
+  return api.post("/conversations", data);
 };
 
 /**
@@ -112,7 +114,7 @@ export const deleteConversation = (id: number) => {
  * 清空会话列表
  */
 export const clearConversations = () => {
-  return api.delete('/conversations');
+  return api.delete("/conversations");
 };
 
 /**
@@ -135,12 +137,12 @@ export interface GetMessagesParams {
  * 获取消息列表
  */
 export const getMessages = (params: GetMessagesParams) => {
-  return api.get('/messages', { params });
+  return api.get("/messages", { params });
 };
 
 export interface SendMessageData {
   conversationId: number;
-  type: 'text' | 'image' | 'video';
+  type: "text" | "image" | "video";
   content?: string;
   mediaUrl?: string;
   mediaSize?: number;
@@ -152,13 +154,16 @@ export interface SendMessageData {
  * 发送消息
  */
 export const sendMessage = (data: SendMessageData) => {
-  return api.post('/messages', data);
+  return api.post("/messages", data);
 };
 
 /**
  * 标记消息已读
  */
-export const markMessageAsRead = (conversationId: number, messageId: number) => {
+export const markMessageAsRead = (
+  conversationId: number,
+  messageId: number
+) => {
   return api.post(`/messages/${messageId}/read`, { conversationId, messageId });
 };
 
@@ -169,11 +174,11 @@ export const markMessageAsRead = (conversationId: number, messageId: number) => 
  */
 export const uploadImage = (file: File) => {
   const formData = new FormData();
-  formData.append('file', file);
-  
-  return api.post('/upload/image', formData, {
+  formData.append("file", file);
+
+  return api.post("/upload/image", formData, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      "Content-Type": "multipart/form-data",
     },
   });
 };
@@ -183,11 +188,11 @@ export const uploadImage = (file: File) => {
  */
 export const uploadVideo = (file: File) => {
   const formData = new FormData();
-  formData.append('file', file);
-  
-  return api.post('/upload/video', formData, {
+  formData.append("file", file);
+
+  return api.post("/upload/video", formData, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      "Content-Type": "multipart/form-data",
     },
   });
 };
