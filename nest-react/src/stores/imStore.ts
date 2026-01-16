@@ -65,6 +65,8 @@ export interface Message {
   tempId?: string; // 临时 ID，用于标识发送中的消息
 }
 
+export const rtcInitStatus = ["notInit", "initing", "inited"] as const;
+
 // Store 接口
 interface ImStore {
   // 状态
@@ -75,7 +77,10 @@ interface ImStore {
   onlineUsers: number[];
   typingUsers: Map<number, number[]>; // conversationId -> userId[]
 
+  webrtcInitStatus: (typeof rtcInitStatus)[number];
+
   // 操作
+  setWebrtcInitStatus: (status: (typeof rtcInitStatus)[number]) => void;
   setContacts: (contacts: Contact[]) => void;
   addContact: (contact: Contact) => void;
   removeContact: (id: number) => void;
@@ -115,7 +120,13 @@ export const useImStore = create<ImStore>((set) => ({
   currentConversation: null,
   messages: [],
   onlineUsers: [],
+  webrtcInitStatus: "notInit",
   typingUsers: new Map(),
+
+  setWebrtcInitStatus: (webrtcInitStatus) =>
+    set({
+      webrtcInitStatus,
+    }),
 
   // 联系人操作
   setContacts: (contacts) => set({ contacts }),

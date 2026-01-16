@@ -1,19 +1,19 @@
 /**
  * WebSocket 服务
- * 
+ *
  * 管理与后端 Socket.IO 服务器的连接
  * 提供消息发送、接收、重连等功能
  */
 
-import { io, Socket } from 'socket.io-client';
+import { io, Socket } from "socket.io-client";
 
 // WebSocket 服务器地址
-const SOCKET_URL = process.env.REACT_APP_WS_URL || 'https://localhost:7002';
+const SOCKET_URL = process.env.REACT_APP_WS_URL || "https://localhost:7002";
 
 // 事件类型定义
 export interface SendMessageData {
   conversationId: number;
-  type: 'text' | 'image' | 'video';
+  type: "text" | "image" | "video";
   content?: string;
   mediaUrl?: string;
   mediaSize?: number;
@@ -66,13 +66,13 @@ class SocketService {
   connect(token: string): void {
     // 如果已经连接，不重复连接
     if (this.socket?.connected) {
-      console.log('Socket 已连接，复用现有连接');
+      console.log("Socket 已连接，复用现有连接");
       return;
     }
 
     // 如果 socket 存在但未连接，先断开
     if (this.socket) {
-      console.log('清理旧的 Socket 连接');
+      console.log("清理旧的 Socket 连接");
       this.socket.disconnect();
       this.socket = null;
     }
@@ -80,45 +80,48 @@ class SocketService {
     this.token = token;
     this.isManualDisconnect = false;
 
-    console.log('创建新的 Socket 连接...');
+    console.log("创建新的 Socket 连接...");
 
     // 创建 Socket 连接
     this.socket = io(`${SOCKET_URL}/im`, {
       auth: {
         token,
       },
-      transports: ['websocket', 'polling'],
+      transports: ["websocket", "polling"],
       secure: true,
       rejectUnauthorized: false, // 开发环境忽略自签名证书
       reconnection: false, // 禁用自动重连，我们手动控制
     });
 
     // 连接成功
-    this.socket.on('connected', (data: { userId: number; socketId: string }) => {
-      console.log('Socket 连接成功:', data);
-      this.reconnectAttempts = 0;
-      this.reconnectDelay = 1000;
-    });
+    this.socket.on(
+      "connected",
+      (data: { userId: number; socketId: string }) => {
+        console.log("Socket 连接成功:", data);
+        this.reconnectAttempts = 0;
+        this.reconnectDelay = 1000;
+      }
+    );
 
     // 连接错误
-    this.socket.on('connect_error', (error) => {
-      console.error('Socket 连接错误:', error.message);
+    this.socket.on("connect_error", (error) => {
+      console.error("Socket 连接错误:", error.message);
       this.handleReconnect();
     });
 
     // 断开连接
-    this.socket.on('disconnect', (reason) => {
-      console.log('Socket 断开连接:', reason);
-      
+    this.socket.on("disconnect", (reason) => {
+      console.log("Socket 断开连接:", reason);
+
       // 如果不是手动断开，尝试重连
-      if (!this.isManualDisconnect && reason !== 'io client disconnect') {
+      if (!this.isManualDisconnect && reason !== "io client disconnect") {
         this.handleReconnect();
       }
     });
 
     // 错误事件
-    this.socket.on('error', (error: { message: string }) => {
-      console.error('Socket 错误:', error.message);
+    this.socket.on("error", (error: { message: string }) => {
+      console.error("Socket 错误:", error.message);
     });
   }
 
@@ -130,7 +133,7 @@ class SocketService {
       this.isManualDisconnect = true;
       this.socket.disconnect();
       this.socket = null;
-      console.log('Socket 手动断开');
+      console.log("Socket 手动断开");
     }
   }
 
@@ -146,7 +149,7 @@ class SocketService {
    */
   private handleReconnect(): void {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error('达到最大重连次数，停止重连');
+      console.error("达到最大重连次数，停止重连");
       return;
     }
 
@@ -167,11 +170,15 @@ class SocketService {
    */
   on(event: string, callback: (...args: any[]) => void): void {
     if (!this.socket) {
-      console.warn('Socket 未连接，无法监听事件:', event);
+      console.warn("Socket 未连接，无法监听事件:", event);
       return;
     }
     console.log(`注册 Socket 事件监听: ${event}`);
+    console.log(`回调函数类型:`, typeof callback);
+    console.log(`Socket 对象存在:`, !!this.socket);
+    console.log(`Socket 已连接:`, this.socket.connected);
     this.socket.on(event, callback);
+    console.log(`事件 ${event} 注册完成`);
   }
 
   /**
@@ -193,10 +200,10 @@ class SocketService {
    */
   sendMessage(data: SendMessageData): void {
     if (!this.socket?.connected) {
-      console.error('Socket 未连接，无法发送消息');
+      console.error("Socket 未连接，无法发送消息");
       return;
     }
-    this.socket.emit('sendMessage', data);
+    this.socket.emit("sendMessage", data);
   }
 
   /**
@@ -204,10 +211,10 @@ class SocketService {
    */
   joinConversation(conversationId: number): void {
     if (!this.socket?.connected) {
-      console.error('Socket 未连接，无法加入会话');
+      console.error("Socket 未连接，无法加入会话");
       return;
     }
-    this.socket.emit('joinConversation', { conversationId });
+    this.socket.emit("joinConversation", { conversationId });
   }
 
   /**
@@ -217,7 +224,7 @@ class SocketService {
     if (!this.socket?.connected) {
       return;
     }
-    this.socket.emit('leaveConversation', { conversationId });
+    this.socket.emit("leaveConversation", { conversationId });
   }
 
   /**
@@ -227,7 +234,7 @@ class SocketService {
     if (!this.socket?.connected) {
       return;
     }
-    this.socket.emit('markAsRead', { conversationId, messageId });
+    this.socket.emit("markAsRead", { conversationId, messageId });
   }
 
   /**
@@ -237,7 +244,7 @@ class SocketService {
     if (!this.socket?.connected) {
       return;
     }
-    this.socket.emit('typing', { conversationId });
+    this.socket.emit("typing", { conversationId });
   }
 
   /**
@@ -247,18 +254,26 @@ class SocketService {
     if (!this.socket?.connected) {
       return;
     }
-    this.socket.emit('stopTyping', { conversationId });
+    this.socket.emit("stopTyping", { conversationId });
   }
 
   /**
    * WebRTC: 发送通话邀请
    */
-  callInvite(toUserId: number, conversationId: number, callType: 'audio' | 'video'): void {
+  callInvite(
+    toUserId: number,
+    conversationId: number,
+    callType: "audio" | "video"
+  ): void {
     if (!this.socket?.connected) {
-      console.error('Socket 未连接，无法发送通话邀请');
+      console.error("Socket 未连接，无法发送通话邀请");
       return;
     }
-    this.socket.emit('callInvite', { targetUserId: toUserId, conversationId, callType });
+    this.socket.emit("callInvite", {
+      targetUserId: toUserId,
+      conversationId,
+      callType,
+    });
   }
 
   /**
@@ -266,10 +281,10 @@ class SocketService {
    */
   callAccept(fromUserId: number, conversationId: number): void {
     if (!this.socket?.connected) {
-      console.error('Socket 未连接，无法接受通话');
+      console.error("Socket 未连接，无法接受通话");
       return;
     }
-    this.socket.emit('callAccept', { callerId: fromUserId, conversationId });
+    this.socket.emit("callAccept", { callerId: fromUserId, conversationId });
   }
 
   /**
@@ -277,10 +292,10 @@ class SocketService {
    */
   callReject(fromUserId: number, conversationId: number): void {
     if (!this.socket?.connected) {
-      console.error('Socket 未连接，无法拒绝通话');
+      console.error("Socket 未连接，无法拒绝通话");
       return;
     }
-    this.socket.emit('callReject', { callerId: fromUserId, conversationId });
+    this.socket.emit("callReject", { callerId: fromUserId, conversationId });
   }
 
   /**
@@ -288,10 +303,10 @@ class SocketService {
    */
   callHangup(toUserId: number, conversationId: number): void {
     if (!this.socket?.connected) {
-      console.error('Socket 未连接，无法挂断通话');
+      console.error("Socket 未连接，无法挂断通话");
       return;
     }
-    this.socket.emit('callHangup', { targetUserId: toUserId, conversationId });
+    this.socket.emit("callHangup", { targetUserId: toUserId, conversationId });
   }
 
   /**
@@ -299,10 +314,10 @@ class SocketService {
    */
   webrtcOffer(toUserId: number, offer: RTCSessionDescriptionInit): void {
     if (!this.socket?.connected) {
-      console.error('Socket 未连接，无法发送 Offer');
+      console.error("Socket 未连接，无法发送 Offer");
       return;
     }
-    this.socket.emit('webrtcOffer', { targetUserId: toUserId, offer });
+    this.socket.emit("webrtcOffer", { targetUserId: toUserId, offer });
   }
 
   /**
@@ -310,10 +325,10 @@ class SocketService {
    */
   webrtcAnswer(toUserId: number, answer: RTCSessionDescriptionInit): void {
     if (!this.socket?.connected) {
-      console.error('Socket 未连接，无法发送 Answer');
+      console.error("Socket 未连接，无法发送 Answer");
       return;
     }
-    this.socket.emit('webrtcAnswer', { targetUserId: toUserId, answer });
+    this.socket.emit("webrtcAnswer", { targetUserId: toUserId, answer });
   }
 
   /**
@@ -321,10 +336,13 @@ class SocketService {
    */
   webrtcIceCandidate(toUserId: number, candidate: RTCIceCandidateInit): void {
     if (!this.socket?.connected) {
-      console.error('Socket 未连接，无法发送 ICE Candidate');
+      console.error("Socket 未连接，无法发送 ICE Candidate");
       return;
     }
-    this.socket.emit('webrtcIceCandidate', { targetUserId: toUserId, candidate });
+    this.socket.emit("webrtcIceCandidate", {
+      targetUserId: toUserId,
+      candidate,
+    });
   }
 }
 

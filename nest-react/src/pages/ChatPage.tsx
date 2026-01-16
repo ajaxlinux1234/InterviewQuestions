@@ -54,6 +54,8 @@ export function ChatPage() {
     setCurrentConversation,
     setMessages,
     addMessage,
+    webrtcInitStatus,
+    setWebrtcInitStatus,
     updateConversation,
   } = useImStore();
 
@@ -239,6 +241,59 @@ export function ChatPage() {
     // 连接 WebSocket（如果已连接会复用）
     socketService.connect(token);
 
+    // 监听 Socket 连接成功事件，然后初始化 WebRTC
+    socketService.on("connected", (data: any) => {
+      console.log("=== Socket 连接成功 ===", data);
+
+      // 初始化 WebRTC（只初始化一次）
+      if (webrtcInitStatus === "notInit") {
+        console.log("=== Socket 已连接，开始初始化 WebRTC ===");
+        webrtcService.init();
+        setWebrtcInitStatus("inited");
+
+        // 注册 WebRTC 状态变化监听器
+        webrtcService.onStateChange((state) => {
+          console.log("=== WebRTC 状态变化回调被触发 ===");
+          console.log("新状态:", state);
+
+          // 当收到通话邀请或通话状态变化时,显示通话模态框
+          if (state.status !== "idle") {
+            console.log("准备显示通话模态框");
+            setShowCallModal(true);
+          } else {
+            console.log("准备隐藏通话模态框");
+            setShowCallModal(false);
+          }
+        });
+
+        console.log("=== WebRTC 初始化完成 ===");
+      }
+    });
+
+    // 如果 Socket 已经连接，直接初始化 WebRTC
+    if (socketService.isConnected() && webrtcInitStatus === "notInit") {
+      console.log("=== Socket 已连接，直接初始化 WebRTC ===");
+      webrtcService.init();
+      setWebrtcInitStatus("inited");
+
+      // 注册 WebRTC 状态变化监听器
+      webrtcService.onStateChange((state) => {
+        console.log("=== WebRTC 状态变化回调被触发 ===");
+        console.log("新状态:", state);
+
+        // 当收到通话邀请或通话状态变化时,显示通话模态框
+        if (state.status !== "idle") {
+          console.log("准备显示通话模态框");
+          setShowCallModal(true);
+        } else {
+          console.log("准备隐藏通话模态框");
+          setShowCallModal(false);
+        }
+      });
+
+      console.log("=== WebRTC 初始化完成 ===");
+    }
+
     // 监听用户正在输入
     const handleUserTyping = (data: {
       conversationId: number;
@@ -263,35 +318,6 @@ export function ChatPage() {
     socketService.on("userTyping", handleUserTyping);
     socketService.on("userStopTyping", handleUserStopTyping);
 
-    // 使用 ref 防止 Strict Mode 导致的重复初始化
-    if (webrtcInitializedRef.current) {
-      console.log("WebRTC 已初始化（通过 ref 检测），跳过");
-      return;
-    }
-    // 初始化 WebRTC 服务（注册通话相关的 Socket 监听器）
-    webrtcService.init();
-
-    console.log("=== WebRTC 状态变化监听器注册完成 ===");
-
-    // 标记已初始化
-    webrtcInitializedRef.current = true;
-    // 注册 WebRTC 状态变化监听器
-    console.log("=== 注册 WebRTC 状态变化监听器 ===");
-
-    webrtcService.onStateChange((state) => {
-      console.log("=== WebRTC 状态变化回调被触发 ===");
-      console.log("新状态:", state);
-
-      // 当收到通话邀请或通话状态变化时,显示通话模态框
-      if (state.status !== "idle") {
-        console.log("准备显示通话模态框");
-        setShowCallModal(true);
-      } else {
-        console.log("准备隐藏通话模态框");
-        setShowCallModal(false);
-      }
-    });
-
     // 清理：只移除事件监听器，不断开连接
     return () => {
       socketService.off("newMessage", handleNewMessage);
@@ -300,7 +326,7 @@ export function ChatPage() {
       socketService.off("userStopTyping", handleUserStopTyping);
       // 注意：不调用 disconnect()，保持连接
     };
-  }, [navigate, handleNewMessage, handleMessageSent]); // 添加回调函数作为依赖
+  }, [navigate, handleNewMessage, handleMessageSent, webrtcInitStatus]); // 添加回调函数作为依赖
 
   // 单独处理新消息的已读标记（当 currentConversation 变化时）
   useEffect(() => {
