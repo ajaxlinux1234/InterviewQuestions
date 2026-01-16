@@ -29,7 +29,7 @@ class WebRTCService {
     conversationId: null,
   };
 
-  private onStateChangeCallback: ((state: CallState) => void) | null = null;
+  private onStateChangeCallbacks: ((state: CallState) => void)[] = [];
   private onRemoteStreamCallback: ((stream: MediaStream) => void) | null = null;
   private onLocalStreamCallback: ((stream: MediaStream) => void) | null = null;
 
@@ -308,7 +308,7 @@ class WebRTCService {
     };
 
     console.log("更新后状态:", this.callState);
-    console.log("是否有状态变化回调:", !!this.onStateChangeCallback);
+    console.log("回调数量:", this.onStateChangeCallbacks.length);
 
     this.notifyStateChange();
     console.log("=== 状态变化通知已发送 ===");
@@ -448,10 +448,13 @@ class WebRTCService {
    */
   onStateChange(callback: (state: CallState) => void) {
     console.log("=== onStateChange 被调用 ===");
-    console.log("当前回调是否存在:", !!this.onStateChangeCallback);
+    console.log("当前回调数量:", this.onStateChangeCallbacks.length);
 
-    this.onStateChangeCallback = callback;
-    console.log("状态变化回调已设置");
+    this.onStateChangeCallbacks.push(callback);
+    console.log(
+      "状态变化回调已添加，当前回调数量:",
+      this.onStateChangeCallbacks.length
+    );
   }
 
   /**
@@ -472,8 +475,20 @@ class WebRTCService {
    * 通知状态变化
    */
   private notifyStateChange() {
-    if (this.onStateChangeCallback) {
-      this.onStateChangeCallback({ ...this.callState });
+    console.log("=== notifyStateChange 被调用 ===");
+    console.log("当前状态:", this.callState);
+    console.log("回调数量:", this.onStateChangeCallbacks.length);
+
+    if (this.onStateChangeCallbacks.length > 0) {
+      console.log("调用所有状态变化回调");
+      const stateCopy = { ...this.callState };
+      this.onStateChangeCallbacks.forEach((callback, index) => {
+        console.log(`执行回调 ${index + 1}`);
+        callback(stateCopy);
+      });
+      console.log("所有状态变化回调已执行");
+    } else {
+      console.warn("没有注册任何状态变化回调！");
     }
   }
 

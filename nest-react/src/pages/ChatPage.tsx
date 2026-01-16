@@ -38,6 +38,8 @@ export function ChatPage() {
 
   // 使用 ref 来跟踪是否已经初始化过 WebRTC
   const webrtcInitializedRef = useRef(false);
+  // 使用 ref 来跟踪是否已经连接过 Socket
+  const socketConnectedRef = useRef(false);
 
   // 监控 showCallModal 状态变化
   useEffect(() => {
@@ -54,8 +56,6 @@ export function ChatPage() {
     setCurrentConversation,
     setMessages,
     addMessage,
-    webrtcInitStatus,
-    setWebrtcInitStatus,
     updateConversation,
   } = useImStore();
 
@@ -216,6 +216,12 @@ export function ChatPage() {
 
   // 初始化 WebSocket 连接（只在组件挂载时执行一次）
   useEffect(() => {
+    // 如果已经连接过，跳过
+    // if (socketConnectedRef.current) {
+    //   console.log("Socket 已连接，跳过重复连接");
+    //   return;
+    // }
+
     // 从 localStorage 直接读取 token（不依赖 Zustand）
     let token = localStorage.getItem("token");
 
@@ -240,16 +246,18 @@ export function ChatPage() {
 
     // 连接 WebSocket（如果已连接会复用）
     socketService.connect(token);
+    // 标记已连接
+    socketConnectedRef.current = true;
 
     // 监听 Socket 连接成功事件，然后初始化 WebRTC
     socketService.on("connected", (data: any) => {
       console.log("=== Socket 连接成功 ===", data);
 
       // 初始化 WebRTC（只初始化一次）
-      if (webrtcInitStatus === "notInit") {
+      if (!webrtcInitializedRef.current) {
         console.log("=== Socket 已连接，开始初始化 WebRTC ===");
         webrtcService.init();
-        setWebrtcInitStatus("inited");
+        webrtcInitializedRef.current = true;
 
         // 注册 WebRTC 状态变化监听器
         webrtcService.onStateChange((state) => {
@@ -271,10 +279,10 @@ export function ChatPage() {
     });
 
     // 如果 Socket 已经连接，直接初始化 WebRTC
-    if (socketService.isConnected() && webrtcInitStatus === "notInit") {
+    if (socketService.isConnected() && !webrtcInitializedRef.current) {
       console.log("=== Socket 已连接，直接初始化 WebRTC ===");
       webrtcService.init();
-      setWebrtcInitStatus("inited");
+      webrtcInitializedRef.current = true;
 
       // 注册 WebRTC 状态变化监听器
       webrtcService.onStateChange((state) => {
@@ -326,7 +334,7 @@ export function ChatPage() {
       socketService.off("userStopTyping", handleUserStopTyping);
       // 注意：不调用 disconnect()，保持连接
     };
-  }, [navigate, handleNewMessage, handleMessageSent, webrtcInitStatus]); // 添加回调函数作为依赖
+  }, [navigate, handleNewMessage, handleMessageSent]); // 添加回调函数作为依赖
 
   // 单独处理新消息的已读标记（当 currentConversation 变化时）
   useEffect(() => {
