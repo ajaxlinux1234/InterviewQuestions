@@ -8,7 +8,7 @@
 import { io, Socket } from "socket.io-client";
 
 // WebSocket 服务器地址
-const SOCKET_URL = process.env.REACT_APP_WS_URL || "http://47.94.128.228:7002";
+const SOCKET_URL = process.env.REACT_APP_WS_URL || "http://localhost";
 
 // 事件类型定义
 export interface SendMessageData {

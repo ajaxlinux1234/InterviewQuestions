@@ -92,12 +92,12 @@ export function MessageList({ messages }: MessageListProps) {
 
                   {message.type === "image" && message.mediaUrl && (
                     <img
-                      src={`http://47.94.128.228:7002${message.mediaUrl}`}
+                      src={`http://localhost${message.mediaUrl}`}
                       alt="图片"
                       className="max-w-sm rounded cursor-pointer hover:opacity-90"
                       onClick={() =>
                         window.open(
-                          `http://47.94.128.228:7002${message.mediaUrl}`,
+                          `http://localhost${message.mediaUrl}`,
                           "_blank"
                         )
                       }
@@ -106,7 +106,7 @@ export function MessageList({ messages }: MessageListProps) {
 
                   {message.type === "video" && message.mediaUrl && (
                     <video
-                      src={`http://47.94.128.228:7002${message.mediaUrl}`}
+                      src={`http://localhost${message.mediaUrl}`}
                       controls
                       className="max-w-sm rounded"
                     />

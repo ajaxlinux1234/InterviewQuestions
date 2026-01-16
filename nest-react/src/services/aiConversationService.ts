@@ -4,8 +4,7 @@
  * 管理 AI 助手的会话列表和历史记录
  */
 
-const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://47.94.128.228:7002";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost";
 
 export interface AiConversation {
   id: number;

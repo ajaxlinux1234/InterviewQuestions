@@ -10,7 +10,7 @@ const CryptoJS = require("crypto-js");
 
 // 创建 axios 实例
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || "http://47.94.128.228:7002",
+  baseURL: process.env.REACT_APP_API_BASE_URL || "http://localhost",
   timeout: 10000,
 });
 
