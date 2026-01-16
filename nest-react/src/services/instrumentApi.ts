@@ -1,20 +1,21 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:7002';
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:7002";
 
 // 创建 axios 实例
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // 请求拦截器 - 添加认证 token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -31,9 +32,9 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token 过期，清除本地存储并跳转到登录页
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
@@ -50,7 +51,7 @@ export interface InstrumentQueryParams {
   location?: string;
   conditionLevel?: string;
   sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
+  sortOrder?: "ASC" | "DESC";
 }
 
 export interface CreateInstrumentData {
@@ -72,8 +73,8 @@ export interface CreateInstrumentData {
   department?: string;
   responsiblePerson?: string;
   contactInfo?: string;
-  status?: 'available' | 'in_use' | 'maintenance' | 'retired' | 'damaged';
-  conditionLevel?: 'excellent' | 'good' | 'fair' | 'poor';
+  status?: "available" | "in_use" | "maintenance" | "retired" | "damaged";
+  conditionLevel?: "excellent" | "good" | "fair" | "poor";
   lastMaintenanceDate?: string;
   nextMaintenanceDate?: string;
 }
@@ -83,7 +84,7 @@ export interface UpdateInstrumentData extends Partial<CreateInstrumentData> {}
 export const instrumentApi = {
   // 获取仪器列表
   async getInstruments(params: InstrumentQueryParams = {}) {
-    const response = await api.get('/instruments', { params });
+    const response = await api.get("/instruments", { params });
     return response.data;
   },
 
@@ -95,7 +96,7 @@ export const instrumentApi = {
 
   // 创建仪器
   async createInstrument(data: CreateInstrumentData) {
-    const response = await api.post('/instruments', data);
+    const response = await api.post("/instruments", data);
     return response.data;
   },
 
@@ -113,13 +114,13 @@ export const instrumentApi = {
 
   // 批量删除仪器
   async batchDeleteInstruments(ids: number[]) {
-    const response = await api.delete('/instruments/batch', { data: { ids } });
+    const response = await api.delete("/instruments/batch", { data: { ids } });
     return response.data;
   },
 
   // 搜索仪器
   async searchInstruments(keyword: string, limit?: number) {
-    const response = await api.get('/instruments/search', {
+    const response = await api.get("/instruments/search", {
       params: { keyword, limit },
     });
     return response.data;
@@ -127,19 +128,19 @@ export const instrumentApi = {
 
   // 获取仪器统计信息
   async getInstrumentStats() {
-    const response = await api.get('/instruments/stats');
+    const response = await api.get("/instruments/stats");
     return response.data;
   },
 
   // 获取仪器分类
   async getCategories() {
-    const response = await api.get('/instrument-categories');
+    const response = await api.get("/instrument-categories");
     return response.data;
   },
 
   // 获取仪器品牌
   async getBrands() {
-    const response = await api.get('/instrument-brands');
+    const response = await api.get("/instrument-brands");
     return response.data;
   },
 
@@ -151,7 +152,7 @@ export const instrumentApi = {
     parentId?: number;
     sortOrder?: number;
   }) {
-    const response = await api.post('/instrument-categories', data);
+    const response = await api.post("/instrument-categories", data);
     return response.data;
   },
 
@@ -164,7 +165,7 @@ export const instrumentApi = {
     country?: string;
     description?: string;
   }) {
-    const response = await api.post('/instrument-brands', data);
+    const response = await api.post("/instrument-brands", data);
     return response.data;
   },
 };

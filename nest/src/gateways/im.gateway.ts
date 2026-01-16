@@ -6,19 +6,19 @@ import {
   OnGatewayDisconnect,
   ConnectedSocket,
   MessageBody,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
-import { ImService } from '../services/im.service';
-import { SendMessageDto } from '../dto/im.dto';
-import { AuthService } from '../auth/auth.service';
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import { Logger } from "@nestjs/common";
+import { ImService } from "../services/im.service";
+import { SendMessageDto } from "../dto/im.dto";
+import { AuthService } from "../auth/auth.service";
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:3000', 'https://localhost:3000'],
+    origin: ["http://localhost:3000"],
     credentials: true,
   },
-  namespace: '/im',
+  namespace: "/im",
 })
 export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -29,7 +29,7 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(
     private readonly imService: ImService,
-    private readonly authService: AuthService,
+    private readonly authService: AuthService
   ) {}
 
   /**
@@ -38,11 +38,13 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleConnection(client: Socket) {
     try {
       // 从握手中获取 token
-      const token = client.handshake.auth.token || client.handshake.headers.authorization?.replace('Bearer ', '');
+      const token =
+        client.handshake.auth.token ||
+        client.handshake.headers.authorization?.replace("Bearer ", "");
 
       if (!token) {
         this.logger.warn(`客户端 ${client.id} 连接失败: 缺少 token`);
-        client.emit('error', { message: '缺少认证令牌' });
+        client.emit("error", { message: "缺少认证令牌" });
         client.disconnect();
         return;
       }
@@ -52,7 +54,7 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       if (!user) {
         this.logger.warn(`客户端 ${client.id} 认证失败: 无效的令牌`);
-        client.emit('error', { message: '无效的认证令牌' });
+        client.emit("error", { message: "无效的认证令牌" });
         client.disconnect();
         return;
       }
@@ -72,11 +74,10 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.logger.log(`用户 ${userId} 通过 socket ${client.id} 连接成功`);
 
       // 通知客户端连接成功
-      client.emit('connected', { userId, socketId: client.id });
-
+      client.emit("connected", { userId, socketId: client.id });
     } catch (error) {
       this.logger.error(`客户端 ${client.id} 认证失败: ${error.message}`);
-      client.emit('error', { message: '认证失败: ' + error.message });
+      client.emit("error", { message: "认证失败: " + error.message });
       client.disconnect();
     }
   }
@@ -86,7 +87,7 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
    */
   handleDisconnect(client: Socket) {
     const userId = client.data.userId;
-    
+
     if (userId) {
       const sockets = this.userSockets.get(userId);
       if (sockets) {
@@ -104,16 +105,16 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * 发送消息
    */
-  @SubscribeMessage('sendMessage')
+  @SubscribeMessage("sendMessage")
   async handleSendMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: SendMessageDto,
+    @MessageBody() data: SendMessageDto
   ) {
     try {
       const userId = client.data.userId;
-      
+
       if (!userId) {
-        client.emit('error', { message: '未认证' });
+        client.emit("error", { message: "未认证" });
         return;
       }
 
@@ -123,45 +124,50 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const message = await this.imService.sendMessage(data, userId);
 
       // 获取会话详情，找出所有成员
-      const conversation = await this.imService.getConversationDetail(data.conversationId, userId);
+      const conversation = await this.imService.getConversationDetail(
+        data.conversationId,
+        userId
+      );
 
       // 向会话中的所有在线成员发送消息（除了发送者自己）
-      conversation.members.forEach(member => {
+      conversation.members.forEach((member) => {
         // 跳过发送者自己
         if (member.userId === userId) {
           return;
         }
-        
+
         const memberSockets = this.userSockets.get(member.userId);
         if (memberSockets) {
-          memberSockets.forEach(socketId => {
-            this.server.to(socketId).emit('newMessage', message);
+          memberSockets.forEach((socketId) => {
+            this.server.to(socketId).emit("newMessage", message);
           });
         }
       });
 
       // 确认消息发送成功（只发给发送者）
-      client.emit('messageSent', { messageId: message.id, tempId: data['tempId'] });
-
+      client.emit("messageSent", {
+        messageId: message.id,
+        tempId: data["tempId"],
+      });
     } catch (error) {
-      this.logger.error('发送消息失败:', error);
-      client.emit('error', { message: error.message || '发送消息失败' });
+      this.logger.error("发送消息失败:", error);
+      client.emit("error", { message: error.message || "发送消息失败" });
     }
   }
 
   /**
    * 加入会话房间
    */
-  @SubscribeMessage('joinConversation')
+  @SubscribeMessage("joinConversation")
   async handleJoinConversation(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { conversationId: number },
+    @MessageBody() data: { conversationId: number }
   ) {
     try {
       const userId = client.data.userId;
-      
+
       if (!userId) {
-        client.emit('error', { message: '未认证' });
+        client.emit("error", { message: "未认证" });
         return;
       }
 
@@ -169,81 +175,82 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.join(roomName);
 
       this.logger.log(`用户 ${userId} 加入会话房间 ${roomName}`);
-      client.emit('joinedConversation', { conversationId: data.conversationId });
-
+      client.emit("joinedConversation", {
+        conversationId: data.conversationId,
+      });
     } catch (error) {
-      this.logger.error('加入会话失败:', error);
-      client.emit('error', { message: '加入会话失败' });
+      this.logger.error("加入会话失败:", error);
+      client.emit("error", { message: "加入会话失败" });
     }
   }
 
   /**
    * 离开会话房间
    */
-  @SubscribeMessage('leaveConversation')
+  @SubscribeMessage("leaveConversation")
   async handleLeaveConversation(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { conversationId: number },
+    @MessageBody() data: { conversationId: number }
   ) {
     try {
       const roomName = `conversation:${data.conversationId}`;
       client.leave(roomName);
 
       this.logger.log(`Socket ${client.id} 离开会话房间 ${roomName}`);
-      client.emit('leftConversation', { conversationId: data.conversationId });
-
+      client.emit("leftConversation", { conversationId: data.conversationId });
     } catch (error) {
-      this.logger.error('离开会话失败:', error);
+      this.logger.error("离开会话失败:", error);
     }
   }
 
   /**
    * 标记消息已读
    */
-  @SubscribeMessage('markAsRead')
+  @SubscribeMessage("markAsRead")
   async handleMarkAsRead(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { conversationId: number; messageId: number },
+    @MessageBody() data: { conversationId: number; messageId: number }
   ) {
     try {
       const userId = client.data.userId;
-      
+
       if (!userId) {
-        client.emit('error', { message: '未认证' });
+        client.emit("error", { message: "未认证" });
         return;
       }
 
       await this.imService.markAsRead(data, userId);
 
       // 通知会话中的其他成员
-      this.server.to(`conversation:${data.conversationId}`).emit('messageRead', {
-        conversationId: data.conversationId,
-        messageId: data.messageId,
-        userId,
-      });
-
+      this.server
+        .to(`conversation:${data.conversationId}`)
+        .emit("messageRead", {
+          conversationId: data.conversationId,
+          messageId: data.messageId,
+          userId,
+        });
     } catch (error) {
-      this.logger.error('标记已读失败:', error);
-      client.emit('error', { message: '标记已读失败' });
+      this.logger.error("标记已读失败:", error);
+      client.emit("error", { message: "标记已读失败" });
     }
   }
 
   /**
    * 用户正在输入
    */
-  @SubscribeMessage('typing')
+  @SubscribeMessage("typing")
   handleTyping(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { conversationId: number },
+    @MessageBody() data: { conversationId: number }
   ) {
     const userId = client.data.userId;
-    
+
     if (!userId) {
       return;
     }
 
     // 通知会话中的其他成员
-    client.to(`conversation:${data.conversationId}`).emit('userTyping', {
+    client.to(`conversation:${data.conversationId}`).emit("userTyping", {
       conversationId: data.conversationId,
       userId,
     });
@@ -252,19 +259,19 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * 用户停止输入
    */
-  @SubscribeMessage('stopTyping')
+  @SubscribeMessage("stopTyping")
   handleStopTyping(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { conversationId: number },
+    @MessageBody() data: { conversationId: number }
   ) {
     const userId = client.data.userId;
-    
+
     if (!userId) {
       return;
     }
 
     // 通知会话中的其他成员
-    client.to(`conversation:${data.conversationId}`).emit('userStopTyping', {
+    client.to(`conversation:${data.conversationId}`).emit("userStopTyping", {
       conversationId: data.conversationId,
       userId,
     });
@@ -290,7 +297,7 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   sendToUser(userId: number, event: string, data: any) {
     const sockets = this.userSockets.get(userId);
     if (sockets) {
-      sockets.forEach(socketId => {
+      sockets.forEach((socketId) => {
         this.server.to(socketId).emit(event, data);
       });
     }
@@ -301,26 +308,31 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * 发起通话邀请
    */
-  @SubscribeMessage('callInvite')
+  @SubscribeMessage("callInvite")
   handleCallInvite(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { 
-      targetUserId: number; 
+    @MessageBody()
+    data: {
+      targetUserId: number;
       conversationId: number;
-      callType: 'audio' | 'video';
-    },
+      callType: "audio" | "video";
+    }
   ) {
     const userId = client.data.userId;
-    
+
     if (!userId) {
-      client.emit('error', { message: '未认证' });
+      client.emit("error", { message: "未认证" });
       return;
     }
 
-    this.logger.log(`用户 ${userId} 邀请用户 ${data.targetUserId} 进行${data.callType === 'video' ? '视频' : '音频'}通话`);
+    this.logger.log(
+      `用户 ${userId} 邀请用户 ${data.targetUserId} 进行${
+        data.callType === "video" ? "视频" : "音频"
+      }通话`
+    );
 
     // 向目标用户发送通话邀请
-    this.sendToUser(data.targetUserId, 'callInvite', {
+    this.sendToUser(data.targetUserId, "callInvite", {
       callerId: userId,
       conversationId: data.conversationId,
       callType: data.callType,
@@ -330,22 +342,22 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * 接受通话
    */
-  @SubscribeMessage('callAccept')
+  @SubscribeMessage("callAccept")
   handleCallAccept(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { callerId: number; conversationId: number },
+    @MessageBody() data: { callerId: number; conversationId: number }
   ) {
     const userId = client.data.userId;
-    
+
     if (!userId) {
-      client.emit('error', { message: '未认证' });
+      client.emit("error", { message: "未认证" });
       return;
     }
 
     this.logger.log(`用户 ${userId} 接受了用户 ${data.callerId} 的通话邀请`);
 
     // 通知发起者对方已接受
-    this.sendToUser(data.callerId, 'callAccepted', {
+    this.sendToUser(data.callerId, "callAccepted", {
       accepterId: userId,
       conversationId: data.conversationId,
     });
@@ -354,22 +366,22 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * 拒绝通话
    */
-  @SubscribeMessage('callReject')
+  @SubscribeMessage("callReject")
   handleCallReject(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { callerId: number; conversationId: number },
+    @MessageBody() data: { callerId: number; conversationId: number }
   ) {
     const userId = client.data.userId;
-    
+
     if (!userId) {
-      client.emit('error', { message: '未认证' });
+      client.emit("error", { message: "未认证" });
       return;
     }
 
     this.logger.log(`用户 ${userId} 拒绝了用户 ${data.callerId} 的通话邀请`);
 
     // 通知发起者对方已拒绝
-    this.sendToUser(data.callerId, 'callRejected', {
+    this.sendToUser(data.callerId, "callRejected", {
       rejecterId: userId,
       conversationId: data.conversationId,
     });
@@ -378,22 +390,22 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * 挂断通话
    */
-  @SubscribeMessage('callHangup')
+  @SubscribeMessage("callHangup")
   handleCallHangup(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { targetUserId: number; conversationId: number },
+    @MessageBody() data: { targetUserId: number; conversationId: number }
   ) {
     const userId = client.data.userId;
-    
+
     if (!userId) {
-      client.emit('error', { message: '未认证' });
+      client.emit("error", { message: "未认证" });
       return;
     }
 
     this.logger.log(`用户 ${userId} 挂断了与用户 ${data.targetUserId} 的通话`);
 
     // 通知对方通话已挂断
-    this.sendToUser(data.targetUserId, 'callHangup', {
+    this.sendToUser(data.targetUserId, "callHangup", {
       userId,
       conversationId: data.conversationId,
     });
@@ -402,25 +414,28 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * WebRTC Offer (SDP)
    */
-  @SubscribeMessage('webrtcOffer')
+  @SubscribeMessage("webrtcOffer")
   handleWebRTCOffer(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { 
-      targetUserId: number; 
+    @MessageBody()
+    data: {
+      targetUserId: number;
       offer: RTCSessionDescriptionInit;
-    },
+    }
   ) {
     const userId = client.data.userId;
-    
+
     if (!userId) {
-      client.emit('error', { message: '未认证' });
+      client.emit("error", { message: "未认证" });
       return;
     }
 
-    this.logger.log(`用户 ${userId} 发送 WebRTC Offer 给用户 ${data.targetUserId}`);
+    this.logger.log(
+      `用户 ${userId} 发送 WebRTC Offer 给用户 ${data.targetUserId}`
+    );
 
     // 转发 Offer 给目标用户
-    this.sendToUser(data.targetUserId, 'webrtcOffer', {
+    this.sendToUser(data.targetUserId, "webrtcOffer", {
       callerId: userId,
       offer: data.offer,
     });
@@ -429,25 +444,28 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * WebRTC Answer (SDP)
    */
-  @SubscribeMessage('webrtcAnswer')
+  @SubscribeMessage("webrtcAnswer")
   handleWebRTCAnswer(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { 
-      targetUserId: number; 
+    @MessageBody()
+    data: {
+      targetUserId: number;
       answer: RTCSessionDescriptionInit;
-    },
+    }
   ) {
     const userId = client.data.userId;
-    
+
     if (!userId) {
-      client.emit('error', { message: '未认证' });
+      client.emit("error", { message: "未认证" });
       return;
     }
 
-    this.logger.log(`用户 ${userId} 发送 WebRTC Answer 给用户 ${data.targetUserId}`);
+    this.logger.log(
+      `用户 ${userId} 发送 WebRTC Answer 给用户 ${data.targetUserId}`
+    );
 
     // 转发 Answer 给目标用户
-    this.sendToUser(data.targetUserId, 'webrtcAnswer', {
+    this.sendToUser(data.targetUserId, "webrtcAnswer", {
       answererId: userId,
       answer: data.answer,
     });
@@ -456,23 +474,24 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * WebRTC ICE Candidate
    */
-  @SubscribeMessage('webrtcIceCandidate')
+  @SubscribeMessage("webrtcIceCandidate")
   handleWebRTCIceCandidate(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { 
-      targetUserId: number; 
+    @MessageBody()
+    data: {
+      targetUserId: number;
       candidate: RTCIceCandidateInit;
-    },
+    }
   ) {
     const userId = client.data.userId;
-    
+
     if (!userId) {
-      client.emit('error', { message: '未认证' });
+      client.emit("error", { message: "未认证" });
       return;
     }
 
     // 转发 ICE Candidate 给目标用户
-    this.sendToUser(data.targetUserId, 'webrtcIceCandidate', {
+    this.sendToUser(data.targetUserId, "webrtcIceCandidate", {
       userId,
       candidate: data.candidate,
     });
