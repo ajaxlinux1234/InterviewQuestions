@@ -6,7 +6,7 @@
 
 import axios from "axios";
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}api/im`;
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/im`;
 
 // 创建 axios 实例
 const api = axios.create({
