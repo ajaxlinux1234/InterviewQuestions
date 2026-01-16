@@ -45,6 +45,19 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.handshake.auth.token ||
         client.handshake.headers.authorization?.replace("Bearer ", "");
 
+      this.logger.log(`客户端 ${client.id} 尝试连接`);
+      this.logger.log(
+        `Token from auth: ${client.handshake.auth.token ? "存在" : "不存在"}`
+      );
+      this.logger.log(
+        `Token from header: ${
+          client.handshake.headers.authorization ? "存在" : "不存在"
+        }`
+      );
+      this.logger.log(
+        `最终 Token: ${token ? token.substring(0, 20) + "..." : "无"}`
+      );
+
       if (!token) {
         this.logger.warn(`客户端 ${client.id} 连接失败: 缺少 token`);
         client.emit("error", { message: "缺少认证令牌" });
@@ -57,6 +70,7 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       if (!user) {
         this.logger.warn(`客户端 ${client.id} 认证失败: 无效的令牌`);
+        this.logger.warn(`Token 详情: ${token.substring(0, 30)}...`);
         client.emit("error", { message: "无效的认证令牌" });
         client.disconnect();
         return;
@@ -80,6 +94,7 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.emit("connected", { userId, socketId: client.id });
     } catch (error) {
       this.logger.error(`客户端 ${client.id} 认证失败: ${error.message}`);
+      this.logger.error(`错误堆栈: ${error.stack}`);
       client.emit("error", { message: "认证失败: " + error.message });
       client.disconnect();
     }

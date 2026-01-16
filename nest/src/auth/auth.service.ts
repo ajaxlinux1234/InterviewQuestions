@@ -15,7 +15,7 @@
  * - 依赖注入: 通过构造函数注入依赖的服务
  */
 
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, UnauthorizedException, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
@@ -34,6 +34,8 @@ import { LoginDto, RegisterDto } from "../dto/auth.dto";
  */
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   /**
    * 构造函数 - 依赖注入
    *
@@ -215,31 +217,47 @@ export class AuthService {
    * @returns 用户实体或 null
    */
   async validateToken(token: string): Promise<User | null> {
-    // 查找令牌记录，同时加载关联的用户信息
-    const userToken = await this.tokenRepository.findOne({
-      where: {
-        token, // 令牌匹配
-        is_revoked: 0, // 未被撤销（TINYINT 类型使用数字 0）
-      },
-      relations: ["user"], // 加载关联的用户实体
-    });
+    try {
+      this.logger.log(`验证 Token: ${token.substring(0, 30)}...`);
 
-    // 令牌不存在或已被撤销
-    if (!userToken) {
+      // 查找令牌记录，同时加载关联的用户信息
+      const userToken = await this.tokenRepository.findOne({
+        where: {
+          token, // 令牌匹配
+          is_revoked: 0, // 未被撤销（TINYINT 类型使用数字 0）
+        },
+        relations: ["user"], // 加载关联的用户实体
+      });
+
+      // 令牌不存在或已被撤销
+      if (!userToken) {
+        this.logger.warn(`Token 不存在或已被撤销`);
+        return null;
+      }
+
+      this.logger.log(`找到 Token 记录，用户ID: ${userToken.user?.id}`);
+      this.logger.log(`Token 过期时间: ${userToken.expires_at}`);
+      this.logger.log(`当前时间: ${new Date()}`);
+
+      // 检查令牌是否过期
+      if (new Date() > userToken.expires_at) {
+        this.logger.warn(`Token 已过期`);
+        return null;
+      }
+
+      // 更新令牌最后使用时间（用于统计和安全审计）
+      userToken.last_used_at = new Date();
+      await this.tokenRepository.save(userToken);
+
+      this.logger.log(`Token 验证成功，用户: ${userToken.user.username}`);
+
+      // 返回关联的用户信息
+      return userToken.user;
+    } catch (error) {
+      this.logger.error(`Token 验证异常: ${error.message}`);
+      this.logger.error(`错误堆栈: ${error.stack}`);
       return null;
     }
-
-    // 检查令牌是否过期
-    if (new Date() > userToken.expires_at) {
-      return null;
-    }
-
-    // 更新令牌最后使用时间（用于统计和安全审计）
-    userToken.last_used_at = new Date();
-    await this.tokenRepository.save(userToken);
-
-    // 返回关联的用户信息
-    return userToken.user;
   }
 
   /**
