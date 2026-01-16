@@ -34,12 +34,7 @@ async function debugToken(token) {
         t.created_at,
         t.last_used_at,
         u.username,
-        u.email,
-        NOW() as current_timestamp,
-        CASE 
-          WHEN t.expires_at > NOW() THEN 'valid'
-          ELSE 'expired'
-        END as token_status
+        u.email
       FROM user_tokens t
       LEFT JOIN users u ON t.user_id = u.id
       WHERE t.token = ?`,
@@ -71,6 +66,11 @@ async function debugToken(token) {
       }
     } else {
       const tokenInfo = tokens[0];
+      const now = new Date();
+      const expiresAt = new Date(tokenInfo.expires_at);
+      const isExpired = now > expiresAt;
+      const isRevoked = tokenInfo.is_revoked !== 0;
+
       console.log("✓ Token 找到");
       console.log(`  Token ID: ${tokenInfo.id}`);
       console.log(`  用户 ID: ${tokenInfo.user_id}`);
@@ -78,23 +78,30 @@ async function debugToken(token) {
       console.log(`  邮箱: ${tokenInfo.email}`);
       console.log(
         `  是否撤销: ${tokenInfo.is_revoked} (${
-          tokenInfo.is_revoked === 0 ? "未撤销" : "已撤销"
+          isRevoked ? "已撤销" : "未撤销"
         })`
       );
       console.log(`  过期时间: ${tokenInfo.expires_at}`);
-      console.log(`  当前时间: ${tokenInfo.current_timestamp}`);
       console.log(
-        `  状态: ${tokenInfo.token_status === "valid" ? "有效" : "已过期"}`
+        `  当前时间: ${now.toISOString().slice(0, 19).replace("T", " ")}`
       );
+      console.log(`  状态: ${isExpired ? "已过期" : "有效"}`);
       console.log(`  创建时间: ${tokenInfo.created_at}`);
       console.log(`  最后使用: ${tokenInfo.last_used_at || "从未使用"}`);
 
-      if (tokenInfo.is_revoked !== 0) {
-        console.log("\n❌ Token 已被撤销");
-      } else if (tokenInfo.token_status === "expired") {
-        console.log("\n❌ Token 已过期");
+      console.log("\n========================================");
+      if (isRevoked) {
+        console.log("❌ Token 已被撤销");
+        console.log("   解决方案: 重新登录获取新 token");
+      } else if (isExpired) {
+        console.log("❌ Token 已过期");
+        console.log("   解决方案: 重新登录获取新 token");
       } else {
-        console.log("\n✓ Token 有效，可以使用");
+        console.log("✓ Token 有效，可以使用");
+        console.log("   如果仍然无法连接，请检查:");
+        console.log("   1. 前端是否正确传递了 token");
+        console.log("   2. 后端日志中的详细错误信息");
+        console.log("   3. CORS 配置是否正确");
       }
     }
 
@@ -114,7 +121,6 @@ async function debugToken(token) {
     }
   } catch (error) {
     console.error("❌ 查询失败:", error.message);
-    console.error(error.stack);
   } finally {
     await connection.end();
   }
