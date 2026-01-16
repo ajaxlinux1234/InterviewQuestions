@@ -35,11 +35,11 @@ async function debugToken(token) {
         t.last_used_at,
         u.username,
         u.email,
-        NOW() as current_time,
+        NOW() as current_timestamp,
         CASE 
-          WHEN t.expires_at > NOW() THEN '有效'
-          ELSE '已过期'
-        END as status
+          WHEN t.expires_at > NOW() THEN 'valid'
+          ELSE 'expired'
+        END as token_status
       FROM user_tokens t
       LEFT JOIN users u ON t.user_id = u.id
       WHERE t.token = ?`,
@@ -54,7 +54,7 @@ async function debugToken(token) {
       console.log("\n最近创建的 5 个 tokens:");
       const [recentTokens] = await connection.execute(
         `SELECT 
-          token,
+          LEFT(token, 30) as token_preview,
           user_id,
           is_revoked,
           expires_at,
@@ -63,15 +63,12 @@ async function debugToken(token) {
         ORDER BY created_at DESC
         LIMIT 5`
       );
-      console.table(
-        recentTokens.map((t) => ({
-          token: t.token.substring(0, 30) + "...",
-          user_id: t.user_id,
-          is_revoked: t.is_revoked,
-          expires_at: t.expires_at,
-          created_at: t.created_at,
-        }))
-      );
+
+      if (recentTokens.length > 0) {
+        console.table(recentTokens);
+      } else {
+        console.log("  数据库中没有任何 token");
+      }
     } else {
       const tokenInfo = tokens[0];
       console.log("✓ Token 找到");
@@ -85,14 +82,16 @@ async function debugToken(token) {
         })`
       );
       console.log(`  过期时间: ${tokenInfo.expires_at}`);
-      console.log(`  当前时间: ${tokenInfo.current_time}`);
-      console.log(`  状态: ${tokenInfo.status}`);
+      console.log(`  当前时间: ${tokenInfo.current_timestamp}`);
+      console.log(
+        `  状态: ${tokenInfo.token_status === "valid" ? "有效" : "已过期"}`
+      );
       console.log(`  创建时间: ${tokenInfo.created_at}`);
       console.log(`  最后使用: ${tokenInfo.last_used_at || "从未使用"}`);
 
       if (tokenInfo.is_revoked !== 0) {
         console.log("\n❌ Token 已被撤销");
-      } else if (tokenInfo.status === "已过期") {
+      } else if (tokenInfo.token_status === "expired") {
         console.log("\n❌ Token 已过期");
       } else {
         console.log("\n✓ Token 有效，可以使用");
@@ -107,10 +106,12 @@ async function debugToken(token) {
     const [fields] = await connection.execute(`DESCRIBE user_tokens`);
 
     const isRevokedField = fields.find((f) => f.Field === "is_revoked");
-    console.log("is_revoked 字段信息:");
-    console.log(`  类型: ${isRevokedField.Type}`);
-    console.log(`  允许 NULL: ${isRevokedField.Null}`);
-    console.log(`  默认值: ${isRevokedField.Default}`);
+    if (isRevokedField) {
+      console.log("is_revoked 字段信息:");
+      console.log(`  类型: ${isRevokedField.Type}`);
+      console.log(`  允许 NULL: ${isRevokedField.Null}`);
+      console.log(`  默认值: ${isRevokedField.Default}`);
+    }
   } catch (error) {
     console.error("❌ 查询失败:", error.message);
     console.error(error.stack);
