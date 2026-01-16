@@ -1,12 +1,14 @@
-#!/bin/bash
+#!/bin/sh
 
 # 数据库初始化脚本
-# 使用方法: ./init-db.sh
+# 使用方法: 
+#   1. 无密码: sh init-db.sh
+#   2. 有密码: sh init-db.sh your_password
 
 echo "开始初始化数据库..."
 
 # 获取脚本所在目录
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 SQL_FILE="$SCRIPT_DIR/init-database.sql"
 
 # 检查 SQL 文件是否存在
@@ -15,9 +17,21 @@ if [ ! -f "$SQL_FILE" ]; then
     exit 1
 fi
 
+# 获取密码参数
+MYSQL_PASSWORD="$1"
+
 # 执行 SQL 脚本
 echo "执行 SQL 脚本: $SQL_FILE"
-mysql -u root < "$SQL_FILE"
+
+if [ -z "$MYSQL_PASSWORD" ]; then
+    # 无密码
+    echo "使用无密码方式连接..."
+    mysql -u root < "$SQL_FILE"
+else
+    # 有密码
+    echo "使用密码方式连接..."
+    mysql -u root -p"$MYSQL_PASSWORD" < "$SQL_FILE"
+fi
 
 # 检查执行结果
 if [ $? -eq 0 ]; then
