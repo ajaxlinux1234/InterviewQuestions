@@ -1,0 +1,43 @@
+fix: 修复生产环境 WebSocket 连接问题
+
+## 问题描述
+生产环境 WebSocket 连接失败，前端显示"无效的认证令牌"错误。
+经诊断发现 WebSocket 请求未到达后端，被 Nginx 阻止。
+
+## 根本原因
+1. Nginx 未正确配置 Socket.IO 的 WebSocket 代理
+2. 前端生产环境配置缺少 WebSocket URL
+3. 后端环境变量 NODE_ENV 未设置为 production
+
+## 修复内容
+
+### 配置修复
+- 更新 nest/.env: NODE_ENV=production
+- 更新 nest-react/.env.production: VITE_WS_URL=http://47.94.128.228
+
+### 代码优化
+- nest/src/auth/auth.service.ts: 修复 is_revoked 类型问题，添加详细日志
+- nest/src/gateways/im.gateway.ts: 实现动态 CORS 配置，改进日志
+
+### 工具和文档
+- fix-websocket.sh: 一键修复脚本
+- nginx-websocket.conf: Nginx 配置参考
+- QUICK_FIX.md: 快速修复指南
+- PRODUCTION_FIX_STEPS.md: 详细修复步骤
+- DEPLOYMENT_CHECKLIST.md: 部署检查清单
+- DEBUG_WEBSOCKET.md: 调试指南（更新）
+- WEBSOCKET_FIX_SUMMARY.md: 问题总结
+
+## 部署说明
+在生产服务器上执行:
+1. git pull
+2. ./fix-websocket.sh
+3. 更新 Nginx 配置（参考 nginx-websocket.conf）
+4. sudo nginx -t && sudo nginx -s reload
+
+详见: QUICK_FIX.md
+
+## 影响范围
+- 修复 WebSocket 实时通信功能
+- 不影响现有 HTTP API 功能
+- 需要更新 Nginx 配置才能完全生效
