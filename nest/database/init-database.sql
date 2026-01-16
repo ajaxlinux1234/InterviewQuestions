@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` VARCHAR(50) NOT NULL COMMENT '用户名，唯一标识',
   `password` VARCHAR(255) NOT NULL COMMENT '加密后的密码',
   `email` VARCHAR(100) DEFAULT NULL COMMENT '邮箱地址（可选）',
+  `last_seen` TIMESTAMP NULL DEFAULT NULL COMMENT '最后在线时间',
   `status` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '用户状态：1-正常，0-禁用',
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -282,12 +283,12 @@ CREATE TABLE IF NOT EXISTS `instrument_maintenance_logs` (
 -- 4. 插入初始数据
 -- ========================================
 
--- 插入测试用户 (密码使用 bcrypt 加密，这里使用明文示例，实际部署时需要加密)
+-- 插入测试用户 (密码使用 MD5 加密: 123456)
 INSERT INTO `users` (`username`, `password`, `email`, `status`) VALUES 
-('admin', '$2b$10$YourHashedPasswordHere', 'admin@example.com', 1),
-('xiaozhang', '$2b$10$YourHashedPasswordHere', 'xiaozhang@example.com', 1),
-('xiaoli', '$2b$10$YourHashedPasswordHere', 'xiaoli@example.com', 1),
-('xiaowang', '$2b$10$YourHashedPasswordHere', 'xiaowang@example.com', 1)
+('admin', 'e10adc3949ba59abbe56e057f20f883e', 'admin@example.com', 1),
+('xiaozhang', 'e10adc3949ba59abbe56e057f20f883e', 'xiaozhang@example.com', 1),
+('xiaoli', 'e10adc3949ba59abbe56e057f20f883e', 'xiaoli@example.com', 1),
+('xiaowang', 'e10adc3949ba59abbe56e057f20f883e', 'xiaowang@example.com', 1)
 ON DUPLICATE KEY UPDATE `username`=`username`;
 
 -- 插入仪器分类

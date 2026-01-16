@@ -1,13 +1,13 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { User } from '../types/auth';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { User } from "../types/auth";
 
 interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  
+
   // Actions
   setAuth: (user: User, token: string) => void;
   clearAuth: () => void;
@@ -17,7 +17,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       token: null,
       isAuthenticated: false,
@@ -25,26 +25,26 @@ export const useAuthStore = create<AuthState>()(
 
       setAuth: (user: User, token: string) => {
         // 确保 token 是纯字符串，不包含引号
-        const cleanToken = typeof token === 'string' ? token.trim() : token;
-        
-        localStorage.setItem('token', cleanToken);
-        localStorage.setItem('user', JSON.stringify(user));
+        const cleanToken = typeof token === "string" ? token.trim() : token;
+
+        localStorage.setItem("token", cleanToken);
+        localStorage.setItem("user", JSON.stringify(user));
         set({
           user,
           token: cleanToken,
           isAuthenticated: true,
-          isLoading: false
+          isLoading: false,
         });
       },
 
       clearAuth: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
         set({
           user: null,
           token: null,
           isAuthenticated: false,
-          isLoading: false
+          isLoading: false,
         });
       },
 
@@ -53,17 +53,17 @@ export const useAuthStore = create<AuthState>()(
       },
 
       updateUser: (user: User) => {
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(user));
         set({ user });
-      }
+      },
     }),
     {
-      name: 'auth-storage',
+      name: "auth-storage",
       partialize: (state) => ({
         user: state.user,
         token: state.token,
-        isAuthenticated: state.isAuthenticated
-      })
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );

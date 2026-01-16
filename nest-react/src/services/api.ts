@@ -6,11 +6,11 @@ import {
   ProfileResponse,
   LogoutResponse,
 } from "../types/auth";
-const CryptoJS = require("crypto-js");
+import CryptoJS from "crypto-js";
 
 // 创建 axios 实例
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || "http://localhost",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:7002",
   timeout: 10000,
 });
 

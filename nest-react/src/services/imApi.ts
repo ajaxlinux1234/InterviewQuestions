@@ -6,9 +6,7 @@
 
 import axios from "axios";
 
-const API_BASE_URL = `${
-  process.env.REACT_APP_API_BASE_URL || "http://localhost"
-}/api/im`;
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}api/im`;
 
 // 创建 axios 实例
 const api = axios.create({
