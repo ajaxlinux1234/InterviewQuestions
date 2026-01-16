@@ -5,9 +5,9 @@
 -- ========================================
 
 -- 创建数据库
-CREATE DATABASE IF NOT EXISTS `nest_app` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS `im_system` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE `nest_app`;
+USE `im_system`;
 
 -- ========================================
 -- 1. 用户认证系统表
