@@ -16,7 +16,11 @@ export function ConversationList({
   onSelect,
 }: ConversationListProps) {
   if (conversations.length === 0) {
-    return <div className="p-4 text-center text-gray-500">暂无会话</div>;
+    return (
+      <div className="p-4 text-center text-gray-500 text-sm md:text-base">
+        暂无会话
+      </div>
+    );
   }
 
   return (
@@ -28,18 +32,18 @@ export function ConversationList({
           <div
             key={conversation.id}
             onClick={() => onSelect(conversation)}
-            className={`p-4 cursor-pointer transition-colors ${
+            className={`p-3 md:p-4 cursor-pointer transition-colors active:bg-gray-100 touch-manipulation ${
               isActive ? "bg-blue-50 border-blue-600" : "hover:bg-gray-50"
             }`}
           >
             <div className="flex items-start space-x-3">
               {/* 头像 */}
               <div className="relative flex-shrink-0">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-medium text-lg">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-medium text-base md:text-lg">
                   {conversation.name?.[0]?.toUpperCase() || "C"}
                 </div>
                 {conversation.unreadCount > 0 && (
-                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                  <div className="absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
                     {conversation.unreadCount > 99
                       ? "99+"
                       : conversation.unreadCount}
@@ -50,7 +54,7 @@ export function ConversationList({
               {/* 会话信息 */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
-                  <h3 className="font-medium text-gray-900 truncate">
+                  <h3 className="font-medium text-gray-900 truncate text-sm md:text-base">
                     {conversation.name || "未命名会话"}
                   </h3>
                   {conversation.lastMessage && (
@@ -61,7 +65,7 @@ export function ConversationList({
                 </div>
 
                 {conversation.lastMessage && (
-                  <div className="flex items-center text-sm text-gray-600">
+                  <div className="flex items-center text-xs md:text-sm text-gray-600">
                     <span className="truncate">
                       {conversation.lastMessage.type === "text"
                         ? conversation.lastMessage.content

@@ -20,10 +20,10 @@ export function MessageList({ messages }: MessageListProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center text-gray-500">
+      <div className="flex-1 flex items-center justify-center text-gray-500 px-4">
         <div className="text-center">
           <svg
-            className="w-16 h-16 mx-auto mb-4 text-gray-400"
+            className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -35,14 +35,14 @@ export function MessageList({ messages }: MessageListProps) {
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-          <p>暂无消息</p>
+          <p className="text-sm md:text-base">暂无消息</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
       {messages.map((message) => {
         const isOwn = message.senderId === currentUserId;
         const key = `${message.id}-${message.tempId}`;
@@ -52,13 +52,13 @@ export function MessageList({ messages }: MessageListProps) {
             className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`flex items-end space-x-2 max-w-[70%] ${
+              className={`flex items-end space-x-2 max-w-[85%] md:max-w-[70%] ${
                 isOwn ? "flex-row-reverse space-x-reverse" : "!items-start"
               }`}
             >
               {/* 头像 */}
               {!isOwn && (
-                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs md:text-sm font-medium flex-shrink-0">
                   {message.senderName[0].toUpperCase()}
                 </div>
               )}
@@ -78,14 +78,14 @@ export function MessageList({ messages }: MessageListProps) {
 
                 {/* 消息气泡 */}
                 <div
-                  className={`rounded-lg px-4 py-2 ${
+                  className={`rounded-lg px-3 py-2 md:px-4 md:py-2 ${
                     isOwn
                       ? "bg-blue-600 text-white"
                       : "bg-white text-gray-900 border border-gray-200"
                   }`}
                 >
                   {message.type === "text" && (
-                    <div className="whitespace-pre-wrap break-words">
+                    <div className="whitespace-pre-wrap break-words text-sm md:text-base">
                       {message.content}
                     </div>
                   )}
@@ -94,7 +94,7 @@ export function MessageList({ messages }: MessageListProps) {
                     <img
                       src={`http://localhost${message.mediaUrl}`}
                       alt="图片"
-                      className="max-w-sm rounded cursor-pointer hover:opacity-90"
+                      className="max-w-[200px] md:max-w-sm rounded cursor-pointer hover:opacity-90 active:opacity-75 transition-opacity"
                       onClick={() =>
                         window.open(
                           `http://localhost${message.mediaUrl}`,
@@ -108,7 +108,7 @@ export function MessageList({ messages }: MessageListProps) {
                     <video
                       src={`http://localhost${message.mediaUrl}`}
                       controls
-                      className="max-w-sm rounded"
+                      className="max-w-[200px] md:max-w-sm rounded"
                     />
                   )}
                 </div>

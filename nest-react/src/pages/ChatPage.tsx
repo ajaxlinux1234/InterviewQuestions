@@ -36,6 +36,11 @@ export function ChatPage() {
   const [showAddContact, setShowAddContact] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
 
+  // 移动端状态管理
+  const [isMobile, setIsMobile] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [showChatView, setShowChatView] = useState(false);
+
   // 使用 ref 来跟踪是否已经初始化过 WebRTC
   const webrtcInitializedRef = useRef(false);
   // 使用 ref 来跟踪是否已经连接过 Socket
@@ -45,6 +50,28 @@ export function ChatPage() {
   useEffect(() => {
     console.log(">>> showCallModal 状态变化:", showCallModal);
   }, [showCallModal]);
+
+  // 检测屏幕尺寸变化
+  useEffect(() => {
+    const checkIsMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+
+      // 移动端默认显示侧边栏，桌面端显示聊天视图
+      if (mobile) {
+        setShowSidebar(true);
+        setShowChatView(false);
+      } else {
+        setShowSidebar(true);
+        setShowChatView(true);
+      }
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
 
   const {
     contacts,
@@ -376,11 +403,24 @@ export function ChatPage() {
   const handleSelectConversation = (conversation: any) => {
     setCurrentConversation(conversation);
     setShowDetail(false);
+
+    // 移动端选择会话后切换到聊天视图
+    if (isMobile) {
+      setShowSidebar(false);
+      setShowChatView(true);
+    }
   };
 
   // 处理返回
   const handleBack = () => {
-    navigate("/dashboard");
+    // 移动端：如果在聊天视图，返回到侧边栏；否则返回到仪表板
+    if (isMobile && showChatView) {
+      setShowChatView(false);
+      setShowSidebar(true);
+      setCurrentConversation(null);
+    } else {
+      navigate("/dashboard");
+    }
   };
 
   // 处理清空会话列表
@@ -425,6 +465,12 @@ export function ChatPage() {
         // 如果已存在会话,直接选中
         setCurrentConversation(existingConversation);
         setActiveTab("conversations");
+
+        // 移动端切换到聊天视图
+        if (isMobile) {
+          setShowSidebar(false);
+          setShowChatView(true);
+        }
       } else {
         console.log("创建新会话，联系人ID:", contact.contactUserId);
 
@@ -443,6 +489,12 @@ export function ChatPage() {
         // 选中新创建的会话
         setCurrentConversation(newConversation);
         setActiveTab("conversations");
+
+        // 移动端切换到聊天视图
+        if (isMobile) {
+          setShowSidebar(false);
+          setShowChatView(true);
+        }
 
         // 异步刷新会话列表（确保数据同步）
         setTimeout(() => {
@@ -520,14 +572,14 @@ export function ChatPage() {
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       {/* 顶部导航栏 */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+      <div className="bg-white border-b border-gray-200 px-3 md:px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center space-x-3 md:space-x-4">
           <button
             onClick={handleBack}
-            className="text-gray-600 hover:text-gray-900"
+            className="text-gray-600 hover:text-gray-900 active:text-gray-700 p-1 -m-1 touch-manipulation"
           >
             <svg
-              className="w-6 h-6"
+              className="w-5 h-5 md:w-6 md:h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -540,10 +592,14 @@ export function ChatPage() {
               />
             </svg>
           </button>
-          <h1 className="text-xl font-semibold text-gray-900">聊天</h1>
+          <h1 className="text-lg md:text-xl font-semibold text-gray-900 truncate">
+            {isMobile && showChatView && currentConversation
+              ? currentConversation.name || "聊天"
+              : "聊天"}
+          </h1>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-500">
+          <span className="text-xs md:text-sm text-gray-500">
             {socketService.isConnected() ? "🟢 在线" : "🔴 离线"}
           </span>
         </div>
@@ -552,25 +608,29 @@ export function ChatPage() {
       {/* 主内容区域 */}
       <div className="flex-1 flex overflow-hidden">
         {/* 左侧栏 - 联系人/会话列表 */}
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+        <div
+          className={`${
+            isMobile ? (showSidebar ? "w-full" : "hidden") : "w-80"
+          } bg-white border-r border-gray-200 flex flex-col`}
+        >
           {/* 标签切换 */}
           <div className="flex border-b border-gray-200">
             <button
               onClick={() => setActiveTab("conversations")}
-              className={`flex-1 py-3 text-sm font-medium ${
+              className={`flex-1 py-3 text-sm font-medium transition-colors touch-manipulation ${
                 activeTab === "conversations"
                   ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
+                  : "text-gray-500 hover:text-gray-700 active:text-gray-800"
               }`}
             >
               会话 ({conversations.length})
             </button>
             <button
               onClick={() => setActiveTab("contacts")}
-              className={`flex-1 py-3 text-sm font-medium ${
+              className={`flex-1 py-3 text-sm font-medium transition-colors touch-manipulation ${
                 activeTab === "contacts"
                   ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
+                  : "text-gray-500 hover:text-gray-700 active:text-gray-800"
               }`}
             >
               联系人 ({contacts.length})
@@ -584,7 +644,7 @@ export function ChatPage() {
                 <span className="text-sm text-gray-600">会话管理</span>
                 <button
                   onClick={handleClearConversations}
-                  className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded"
+                  className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 active:bg-red-100 rounded transition-colors touch-manipulation"
                 >
                   清空列表
                 </button>
@@ -594,7 +654,7 @@ export function ChatPage() {
                 <span className="text-sm text-gray-600">联系人管理</span>
                 <button
                   onClick={() => setShowAddContact(true)}
-                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 active:bg-blue-800 transition-colors touch-manipulation"
                 >
                   + 添加联系人
                 </button>
@@ -613,26 +673,26 @@ export function ChatPage() {
             ) : (
               <div className="p-4">
                 {contacts.length === 0 ? (
-                  <div className="text-center text-gray-500 py-8">
-                    暂无联系人
+                  <div className="text-center text-gray-500 py-8 px-4">
+                    <div className="text-sm md:text-base">暂无联系人</div>
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-1 md:space-y-2">
                     {contacts.map((contact) => (
                       <div
                         key={contact.id}
                         onClick={() => handleContactClick(contact)}
-                        className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer"
+                        className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer active:bg-gray-100 transition-colors touch-manipulation"
                       >
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
+                          <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium text-sm md:text-base">
                             {contact.contactUsername[0].toUpperCase()}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-gray-900 truncate">
+                            <div className="font-medium text-gray-900 truncate text-sm md:text-base">
                               {contact.remark || contact.contactUsername}
                             </div>
-                            <div className="text-sm text-gray-500 truncate">
+                            <div className="text-xs md:text-sm text-gray-500 truncate">
                               {contact.contactEmail}
                             </div>
                           </div>
@@ -647,35 +707,63 @@ export function ChatPage() {
         </div>
 
         {/* 中间栏 - 消息列表和输入框 */}
-        <div className="flex-1 flex flex-col bg-gray-50">
+        <div
+          className={`${
+            isMobile ? (showChatView ? "w-full" : "hidden") : "flex-1"
+          } flex flex-col bg-gray-50`}
+        >
           {currentConversation ? (
             <>
               {/* 会话头部 */}
-              <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+              <div className="bg-white border-b border-gray-200 px-3 md:px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
+                  {/* 移动端返回按钮 */}
+                  {isMobile && (
+                    <button
+                      onClick={() => {
+                        setShowChatView(false);
+                        setShowSidebar(true);
+                      }}
+                      className="p-1 text-gray-600 hover:text-gray-900 active:text-gray-700 mr-2 touch-manipulation"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
+                      </svg>
+                    </button>
+                  )}
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium text-sm md:text-base">
                     {currentConversation.name?.[0]?.toUpperCase() || "C"}
                   </div>
-                  <div>
-                    <div className="font-medium text-gray-900">
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-gray-900 text-sm md:text-base truncate">
                       {currentConversation.name || "未命名会话"}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-xs md:text-sm text-gray-500">
                       {currentConversation.members?.length || 0} 人
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1 md:space-x-2">
                   {/* 语音通话按钮 (仅私聊) */}
                   {currentConversation.type === "private" && (
                     <button
                       onClick={handleStartAudioCall}
-                      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg active:bg-gray-200 transition-colors touch-manipulation"
                       title="语音通话"
                     >
                       <svg
-                        className="w-5 h-5"
+                        className="w-4 h-4 md:w-5 md:h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -694,11 +782,11 @@ export function ChatPage() {
                   {currentConversation.type === "private" && (
                     <button
                       onClick={handleStartVideoCall}
-                      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg active:bg-gray-200 transition-colors touch-manipulation"
                       title="视频通话"
                     >
                       <svg
-                        className="w-5 h-5"
+                        className="w-4 h-4 md:w-5 md:h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -713,26 +801,28 @@ export function ChatPage() {
                     </button>
                   )}
 
-                  {/* 详情按钮 */}
-                  <button
-                    onClick={() => setShowDetail(!showDetail)}
-                    className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
-                    title="会话详情"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                  {/* 详情按钮 (桌面端) */}
+                  {!isMobile && (
+                    <button
+                      onClick={() => setShowDetail(!showDetail)}
+                      className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                      title="会话详情"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </button>
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -743,10 +833,10 @@ export function ChatPage() {
               <MessageInput conversationId={currentConversation.id} />
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-500">
+            <div className="flex-1 flex items-center justify-center text-gray-500 px-4">
               <div className="text-center">
                 <svg
-                  className="w-16 h-16 mx-auto mb-4 text-gray-400"
+                  className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -758,14 +848,14 @@ export function ChatPage() {
                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                   />
                 </svg>
-                <p className="text-lg">选择一个会话开始聊天</p>
+                <p className="text-base md:text-lg">选择一个会话开始聊天</p>
               </div>
             </div>
           )}
         </div>
 
-        {/* 右侧栏 - 会话详情 */}
-        {showDetail && currentConversation && (
+        {/* 右侧栏 - 会话详情 (仅桌面端) */}
+        {!isMobile && showDetail && currentConversation && (
           <ConversationDetail
             conversation={currentConversation}
             onClose={() => setShowDetail(false)}
