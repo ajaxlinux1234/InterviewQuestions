@@ -1,7 +1,8 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-
+import { dependencies } from "./package.json";
+const dependenciesName = Object.keys(dependencies);
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // 加载环境变量
@@ -37,27 +38,21 @@ export default defineConfig(({ mode }) => {
       sourcemap: mode === "development", // 开发环境生成 sourcemap
       rollupOptions: {
         output: {
-          // 分包策略
-          manualChunks: {
-            "react-vendor": ["react", "react-dom", "react-router-dom"],
-            "ui-vendor": ["lucide-react", "react-hot-toast"],
-            "markdown-vendor": [
-              "react-markdown",
-              "remark-gfm",
-              "rehype-highlight",
-              "rehype-raw",
-            ],
+          manualChunks(id) {
+            // console.log("id", id);
+            console.log("dependenciesName", dependenciesName);
+            const index = dependenciesName.findIndex(
+              (name) => id.includes(name) && id.includes("node_modules")
+            );
+            if (index > -1) {
+              return dependenciesName[index];
+            }
           },
         },
       },
+      cssCodeSplit: false,
       // 压缩配置
-      minify: "terser",
-      terserOptions: {
-        compress: {
-          drop_console: mode === "production", // 生产环境移除 console
-          drop_debugger: true,
-        },
-      },
+      minify: "esbuild",
     },
 
     // 环境变量前缀（Vite 默认是 VITE_）
