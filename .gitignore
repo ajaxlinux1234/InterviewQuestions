@@ -2,5 +2,6 @@ egg/node_modules/
 nest/node_modules/
 nest/dist/
 nest-react/node_modules/
+nest-react/build/
 node_modules/
 nest/uploads/

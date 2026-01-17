@@ -11,6 +11,11 @@ echo "pm2重启nest-backend"
 pm2 restart nest-backend
 echo "重启nest-backend完成"
 
+cd /root/apps/InterviewQuestions/nest-react
+echo "nest-react开始打包"
+pnpm build
+echo "nest-react打包结束"
+
 rm -rf /var/www/interview-app
 
 echo "开始拷贝文件到服务器目录"
