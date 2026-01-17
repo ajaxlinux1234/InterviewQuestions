@@ -39,8 +39,6 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
-            // console.log("id", id);
-            console.log("dependenciesName", dependenciesName);
             const index = dependenciesName.findIndex(
               (name) => id.includes(name) && id.includes("node_modules")
             );
