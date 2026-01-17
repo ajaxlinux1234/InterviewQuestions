@@ -117,6 +117,11 @@ export function ChatPage() {
       // 获取当前用户 ID
       const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
+      // 检查会话是否存在于当前会话列表中
+      const existingConversation = conversations.find(
+        (c: any) => c.id === message.conversationId
+      );
+
       // 只有当消息不是自己发送的时候才添加到消息列表
       if (message.senderId !== currentUser.id) {
         addMessage(message);
@@ -130,39 +135,46 @@ export function ChatPage() {
         }
       }
 
-      // 更新会话列表中的最后一条消息
-      updateConversation(message.conversationId, {
-        lastMessage: {
-          id: message.id,
-          type: message.type,
-          content: message.content,
-          senderId: message.senderId,
-          senderName: message.senderName,
-          createdAt: message.createdAt,
-        },
-        updatedAt: message.createdAt,
-      });
+      if (existingConversation) {
+        // 更新现有会话的最后一条消息
+        updateConversation(message.conversationId, {
+          lastMessage: {
+            id: message.id,
+            type: message.type,
+            content: message.content,
+            senderId: message.senderId,
+            senderName: message.senderName,
+            createdAt: message.createdAt,
+          },
+          updatedAt: message.createdAt,
+        });
 
-      // 如果不是自己发送的消息，且不是当前打开的会话，增加未读数
-      if (message.senderId !== currentUser.id) {
-        if (
-          !currentConversation ||
-          message.conversationId !== currentConversation.id
-        ) {
-          const conversation = conversations.find(
-            (c: any) => c.id === message.conversationId
-          );
-          if (conversation) {
+        // 如果不是自己发送的消息，且不是当前打开的会话，增加未读数
+        if (message.senderId !== currentUser.id) {
+          if (
+            !currentConversation ||
+            message.conversationId !== currentConversation.id
+          ) {
             updateConversation(message.conversationId, {
-              unreadCount: (conversation.unreadCount || 0) + 1,
+              unreadCount: (existingConversation.unreadCount || 0) + 1,
             });
           }
         }
+      } else {
+        // 会话不存在，需要刷新会话列表
+        console.log("收到新会话的消息，刷新会话列表");
+        refetchConversations();
       }
 
       console.log("已更新会话列表");
     },
-    [addMessage, currentConversation, conversations, updateConversation]
+    [
+      addMessage,
+      currentConversation,
+      conversations,
+      updateConversation,
+      refetchConversations,
+    ]
   );
 
   // 监听消息发送成功的回调函数
@@ -399,6 +411,8 @@ export function ChatPage() {
   // 处理点击联系人 - 打开与该联系人的聊天
   const handleContactClick = async (contact: any) => {
     try {
+      console.log("点击联系人:", contact);
+
       // 查找是否已存在与该联系人的私聊会话
       const existingConversation = conversations.find(
         (conv) =>
@@ -407,22 +421,33 @@ export function ChatPage() {
       );
 
       if (existingConversation) {
+        console.log("找到现有会话:", existingConversation);
         // 如果已存在会话,直接选中
         setCurrentConversation(existingConversation);
         setActiveTab("conversations");
       } else {
+        console.log("创建新会话，联系人ID:", contact.contactUserId);
+
         // 如果不存在会话,创建新的私聊会话
         const response = await createConversation({
           type: "private",
           memberIds: [contact.contactUserId],
         });
 
-        // 刷新会话列表
-        await refetchConversations();
+        console.log("会话创建成功:", response);
+
+        // 立即将新会话添加到本地状态
+        const newConversation = response as any;
+        setConversations([newConversation, ...conversations]);
 
         // 选中新创建的会话
-        setCurrentConversation(response as any);
+        setCurrentConversation(newConversation);
         setActiveTab("conversations");
+
+        // 异步刷新会话列表（确保数据同步）
+        setTimeout(() => {
+          refetchConversations();
+        }, 500);
       }
     } catch (error) {
       console.error("打开聊天失败:", error);

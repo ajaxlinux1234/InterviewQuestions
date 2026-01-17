@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { instrumentApi } from '../services/instrumentApi';
-import { InstrumentModal } from '../components/InstrumentModal';
-import { InstrumentDetailModal } from '../components/InstrumentDetailModal';
-import { ConfirmModal } from '../components/ConfirmModal';
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Plus, Search, Edit, Trash2, Eye } from "lucide-react";
+import toast from "react-hot-toast";
+import { instrumentApi } from "../services/instrumentApi";
+import { InstrumentModal } from "../components/InstrumentModal";
+import { InstrumentDetailModal } from "../components/InstrumentDetailModal";
+import { ConfirmModal } from "../components/ConfirmModal";
 
 interface Instrument {
   id: number;
   name: string;
   model: string;
   serialNumber: string;
-  status: 'available' | 'in_use' | 'maintenance' | 'retired' | 'damaged';
-  conditionLevel: 'excellent' | 'good' | 'fair' | 'poor';
+  status: "available" | "in_use" | "maintenance" | "retired" | "damaged";
+  conditionLevel: "excellent" | "good" | "fair" | "poor";
   location?: string;
   department?: string;
   responsiblePerson?: string;
@@ -48,30 +48,35 @@ export const InstrumentPage: React.FC = () => {
     page: 1,
     limit: 10,
   });
-  const [selectedInstrument, setSelectedInstrument] = useState<Instrument | null>(null);
+  const [selectedInstrument, setSelectedInstrument] =
+    useState<Instrument | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const queryClient = useQueryClient();
 
   // 查询仪器列表
-  const { data: instrumentsData, isLoading, error } = useQuery({
-    queryKey: ['instruments', queryParams],
+  const {
+    data: instrumentsData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["instruments", queryParams],
     queryFn: () => instrumentApi.getInstruments(queryParams),
   });
 
   // 查询分类列表
   const { data: categories } = useQuery({
-    queryKey: ['instrument-categories'],
+    queryKey: ["instrument-categories"],
     queryFn: () => instrumentApi.getCategories(),
   });
 
   // 查询品牌列表
   const { data: brands } = useQuery({
-    queryKey: ['instrument-brands'],
+    queryKey: ["instrument-brands"],
     queryFn: () => instrumentApi.getBrands(),
   });
 
@@ -79,19 +84,19 @@ export const InstrumentPage: React.FC = () => {
   const deleteMutation = useMutation({
     mutationFn: instrumentApi.deleteInstrument,
     onSuccess: () => {
-      toast.success('仪器删除成功');
-      queryClient.invalidateQueries({ queryKey: ['instruments'] });
+      toast.success("仪器删除成功");
+      queryClient.invalidateQueries({ queryKey: ["instruments"] });
       setIsDeleteModalOpen(false);
       setSelectedInstrument(null);
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || '删除失败');
+      toast.error(error.response?.data?.message || "删除失败");
     },
   });
 
   // 搜索处理
   const handleSearch = () => {
-    setQueryParams(prev => ({
+    setQueryParams((prev) => ({
       ...prev,
       page: 1,
       search: searchKeyword.trim() || undefined,
@@ -100,7 +105,7 @@ export const InstrumentPage: React.FC = () => {
 
   // 重置搜索
   const handleResetSearch = () => {
-    setSearchKeyword('');
+    setSearchKeyword("");
     setQueryParams({
       page: 1,
       limit: 10,
@@ -109,29 +114,29 @@ export const InstrumentPage: React.FC = () => {
 
   // 分页处理
   const handlePageChange = (page: number) => {
-    setQueryParams(prev => ({ ...prev, page }));
+    setQueryParams((prev) => ({ ...prev, page }));
   };
 
   // 状态颜色映射
   const getStatusColor = (status: string) => {
     const colors = {
-      available: 'bg-green-100 text-green-800',
-      in_use: 'bg-blue-100 text-blue-800',
-      maintenance: 'bg-yellow-100 text-yellow-800',
-      retired: 'bg-gray-100 text-gray-800',
-      damaged: 'bg-red-100 text-red-800',
+      available: "bg-green-100 text-green-800",
+      in_use: "bg-blue-100 text-blue-800",
+      maintenance: "bg-yellow-100 text-yellow-800",
+      retired: "bg-gray-100 text-gray-800",
+      damaged: "bg-red-100 text-red-800",
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   // 状态文本映射
   const getStatusText = (status: string) => {
     const texts = {
-      available: '可用',
-      in_use: '使用中',
-      maintenance: '维护中',
-      retired: '已退役',
-      damaged: '已损坏',
+      available: "可用",
+      in_use: "使用中",
+      maintenance: "维护中",
+      retired: "已退役",
+      damaged: "已损坏",
     };
     return texts[status as keyof typeof texts] || status;
   };
@@ -139,21 +144,23 @@ export const InstrumentPage: React.FC = () => {
   // 设备状况颜色映射
   const getConditionColor = (condition: string) => {
     const colors = {
-      excellent: 'bg-green-100 text-green-800',
-      good: 'bg-blue-100 text-blue-800',
-      fair: 'bg-yellow-100 text-yellow-800',
-      poor: 'bg-red-100 text-red-800',
+      excellent: "bg-green-100 text-green-800",
+      good: "bg-blue-100 text-blue-800",
+      fair: "bg-yellow-100 text-yellow-800",
+      poor: "bg-red-100 text-red-800",
     };
-    return colors[condition as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return (
+      colors[condition as keyof typeof colors] || "bg-gray-100 text-gray-800"
+    );
   };
 
   // 设备状况文本映射
   const getConditionText = (condition: string) => {
     const texts = {
-      excellent: '优秀',
-      good: '良好',
-      fair: '一般',
-      poor: '较差',
+      excellent: "优秀",
+      good: "良好",
+      fair: "一般",
+      poor: "较差",
     };
     return texts[condition as keyof typeof texts] || condition;
   };
@@ -190,7 +197,7 @@ export const InstrumentPage: React.FC = () => {
                   placeholder="搜索仪器名称、型号、序列号..."
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -199,12 +206,16 @@ export const InstrumentPage: React.FC = () => {
             {/* 筛选器 */}
             <div className="flex gap-2">
               <select
-                value={queryParams.categoryId || ''}
-                onChange={(e) => setQueryParams(prev => ({
-                  ...prev,
-                  page: 1,
-                  categoryId: e.target.value ? Number(e.target.value) : undefined,
-                }))}
+                value={queryParams.categoryId || ""}
+                onChange={(e) =>
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    page: 1,
+                    categoryId: e.target.value
+                      ? Number(e.target.value)
+                      : undefined,
+                  }))
+                }
                 className="px-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">所有分类</option>
@@ -216,12 +227,14 @@ export const InstrumentPage: React.FC = () => {
               </select>
 
               <select
-                value={queryParams.status || ''}
-                onChange={(e) => setQueryParams(prev => ({
-                  ...prev,
-                  page: 1,
-                  status: e.target.value || undefined,
-                }))}
+                value={queryParams.status || ""}
+                onChange={(e) =>
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    page: 1,
+                    status: e.target.value || undefined,
+                  }))
+                }
                 className="px-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">所有状态</option>
@@ -311,36 +324,46 @@ export const InstrumentPage: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
-                            {instrument.category?.name || '-'}
+                            {instrument.category?.name || "-"}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {instrument.brand?.name || '-'}
+                            {instrument.brand?.name || "-"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex flex-col gap-1">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(instrument.status)}`}>
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                                instrument.status
+                              )}`}
+                            >
                               {getStatusText(instrument.status)}
                             </span>
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getConditionColor(instrument.conditionLevel)}`}>
+                            <span
+                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getConditionColor(
+                                instrument.conditionLevel
+                              )}`}
+                            >
                               {getConditionText(instrument.conditionLevel)}
                             </span>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
-                            {instrument.location || '-'}
+                            {instrument.location || "-"}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {instrument.department || '-'}
+                            {instrument.department || "-"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
-                            {instrument.purchasePrice ? `¥${instrument.purchasePrice.toLocaleString()}` : '-'}
+                            {instrument.purchasePrice
+                              ? `¥${instrument.purchasePrice.toLocaleString()}`
+                              : "-"}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {instrument.purchaseDate || '-'}
+                            {instrument.purchaseDate || "-"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -387,9 +410,13 @@ export const InstrumentPage: React.FC = () => {
               {instrumentsData && instrumentsData.totalPages > 1 && (
                 <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                   <div className="text-sm text-gray-700">
-                    显示 {((instrumentsData.page - 1) * instrumentsData.limit) + 1} 到{' '}
-                    {Math.min(instrumentsData.page * instrumentsData.limit, instrumentsData.total)} 条，
-                    共 {instrumentsData.total} 条记录
+                    显示{" "}
+                    {(instrumentsData.page - 1) * instrumentsData.limit + 1} 到{" "}
+                    {Math.min(
+                      instrumentsData.page * instrumentsData.limit,
+                      instrumentsData.total
+                    )}{" "}
+                    条， 共 {instrumentsData.total} 条记录
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -400,10 +427,13 @@ export const InstrumentPage: React.FC = () => {
                       上一页
                     </button>
                     <span className="px-3 py-1 text-sm text-gray-700">
-                      第 {instrumentsData.page} / {instrumentsData.totalPages} 页
+                      第 {instrumentsData.page} / {instrumentsData.totalPages}{" "}
+                      页
                     </span>
                     <button
-                      onClick={() => handlePageChange(+instrumentsData.page + 1)}
+                      onClick={() =>
+                        handlePageChange(+instrumentsData.page + 1)
+                      }
                       disabled={!instrumentsData.hasNext}
                       className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                     >

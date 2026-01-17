@@ -85,6 +85,13 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
       this.userSockets.get(userId).add(client.id);
 
+      this.logger.log(
+        `用户 ${userId} 的活跃连接数: ${this.userSockets.get(userId).size}`
+      );
+      this.logger.log(
+        `当前在线用户: [${Array.from(this.userSockets.keys()).join(", ")}]`
+      );
+
       // 加入用户自己的房间
       client.join(`user:${userId}`);
 
@@ -154,11 +161,18 @@ export class ImGateway implements OnGatewayConnection, OnGatewayDisconnect {
           return;
         }
 
+        this.logger.log(`尝试向用户 ${member.userId} 发送消息通知`);
+
         const memberSockets = this.userSockets.get(member.userId);
-        if (memberSockets) {
+        if (memberSockets && memberSockets.size > 0) {
+          this.logger.log(
+            `用户 ${member.userId} 在线，发送消息到 ${memberSockets.size} 个连接`
+          );
           memberSockets.forEach((socketId) => {
             this.server.to(socketId).emit("newMessage", message);
           });
+        } else {
+          this.logger.warn(`用户 ${member.userId} 不在线或没有活跃连接`);
         }
       });
 

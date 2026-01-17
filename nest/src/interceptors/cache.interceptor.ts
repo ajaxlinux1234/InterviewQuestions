@@ -1,11 +1,11 @@
 /**
  * HTTP 缓存拦截器 (cache.interceptor.ts)
- * 
+ *
  * 这个拦截器为 GET 请求添加 HTTP 缓存支持，包括：
  * 1. 强缓存 (Cache-Control)
  * 2. 协商缓存 (ETag, Last-Modified)
  * 3. 条件请求处理 (If-None-Match, If-Modified-Since)
- * 
+ *
  * NestJS 拦截器概念：
  * - @Injectable(): 标记为可注入的拦截器
  * - NestInterceptor: 拦截器接口
@@ -18,27 +18,27 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { FastifyRequest, FastifyReply } from 'fastify';
-import * as crypto from 'crypto';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { FastifyRequest, FastifyReply } from "fastify";
+import * as crypto from "crypto";
 
 /**
  * 缓存配置接口
  */
 export interface CacheConfig {
-  maxAge?: number;           // 强缓存时间（秒）
-  sMaxAge?: number;          // 共享缓存时间（秒）
-  mustRevalidate?: boolean;  // 是否必须重新验证
-  noCache?: boolean;         // 是否禁用缓存
-  private?: boolean;         // 是否为私有缓存
-  public?: boolean;          // 是否为公共缓存
+  maxAge?: number; // 强缓存时间（秒）
+  sMaxAge?: number; // 共享缓存时间（秒）
+  mustRevalidate?: boolean; // 是否必须重新验证
+  noCache?: boolean; // 是否禁用缓存
+  private?: boolean; // 是否为私有缓存
+  public?: boolean; // 是否为公共缓存
 }
 
 /**
  * HTTP 缓存拦截器
- * 
+ *
  * 缓存策略：
  * 1. 强缓存：使用 Cache-Control 头控制缓存时间
  * 2. 协商缓存：使用 ETag 和 Last-Modified 进行内容验证
@@ -47,15 +47,15 @@ export interface CacheConfig {
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {
   private defaultConfig: CacheConfig = {
-    maxAge: 300,        // 默认 5 分钟强缓存
-    sMaxAge: 600,       // 默认 10 分钟共享缓存
+    maxAge: 300, // 默认 5 分钟强缓存
+    sMaxAge: 600, // 默认 10 分钟共享缓存
     mustRevalidate: true,
     public: true,
   };
 
   /**
    * 拦截器核心方法
-   * 
+   *
    * 处理流程：
    * 1. 检查是否为 GET 请求
    * 2. 检查条件请求头
@@ -66,10 +66,13 @@ export class CacheInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
     const response = context.switchToHttp().getResponse<FastifyReply>();
 
+    return next.handle();
     // 只对 GET 请求启用缓存
-    if (request.method !== 'GET') {
+    if (request.method !== "GET") {
       return next.handle();
     }
+
+    console.log("******request******", request);
 
     // 获取路由特定的缓存配置
     const routeConfig = this.getRouteConfig(context);
@@ -97,7 +100,7 @@ export class CacheInterceptor implements NestInterceptor {
         }
 
         return data;
-      }),
+      })
     );
   }
 
@@ -109,8 +112,9 @@ export class CacheInterceptor implements NestInterceptor {
     const controller = context.getClass();
 
     // 从装饰器元数据中获取缓存配置
-    const handlerConfig = Reflect.getMetadata('cache-config', handler) || {};
-    const controllerConfig = Reflect.getMetadata('cache-config', controller) || {};
+    const handlerConfig = Reflect.getMetadata("cache-config", handler) || {};
+    const controllerConfig =
+      Reflect.getMetadata("cache-config", controller) || {};
 
     return { ...controllerConfig, ...handlerConfig };
   }
@@ -123,9 +127,9 @@ export class CacheInterceptor implements NestInterceptor {
 
     // 设置缓存可见性
     if (config.public) {
-      cacheControlParts.push('public');
+      cacheControlParts.push("public");
     } else if (config.private) {
-      cacheControlParts.push('private');
+      cacheControlParts.push("private");
     }
 
     // 设置最大缓存时间
@@ -140,18 +144,18 @@ export class CacheInterceptor implements NestInterceptor {
 
     // 设置重新验证策略
     if (config.mustRevalidate) {
-      cacheControlParts.push('must-revalidate');
+      cacheControlParts.push("must-revalidate");
     }
 
     // 设置 Cache-Control 头
     if (cacheControlParts.length > 0) {
-      response.header('Cache-Control', cacheControlParts.join(', '));
+      response.header("Cache-Control", cacheControlParts.join(", "));
     }
 
     // 设置 Expires 头（作为 Cache-Control 的备用）
     if (config.maxAge) {
       const expiresDate = new Date(Date.now() + config.maxAge * 1000);
-      response.header('Expires', expiresDate.toUTCString());
+      response.header("Expires", expiresDate.toUTCString());
     }
   }
 
@@ -161,48 +165,48 @@ export class CacheInterceptor implements NestInterceptor {
   private setNegotiationCacheHeaders(
     response: FastifyReply,
     data: any,
-    request: FastifyRequest,
+    request: FastifyRequest
   ) {
     // 生成 ETag
     const etag = this.generateETag(data, request);
-    response.header('ETag', etag);
+    response.header("ETag", etag);
 
     // 设置 Last-Modified（使用当前时间或数据的更新时间）
     const lastModified = this.getLastModified(data);
-    response.header('Last-Modified', lastModified.toUTCString());
+    response.header("Last-Modified", lastModified.toUTCString());
 
     // 设置 Vary 头，告诉缓存服务器根据哪些请求头来区分缓存
-    response.header('Vary', 'Accept, Accept-Encoding, Authorization');
+    response.header("Vary", "Accept, Accept-Encoding, Authorization");
   }
 
   /**
    * 设置禁用缓存头
    */
   private setNoCacheHeaders(response: FastifyReply) {
-    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-    response.header('Pragma', 'no-cache');
-    response.header('Expires', '0');
+    response.header("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.header("Pragma", "no-cache");
+    response.header("Expires", "0");
   }
 
   /**
    * 检查条件请求
-   * 
+   *
    * 处理 If-None-Match 和 If-Modified-Since 头
    */
   private checkConditionalRequest(
     request: FastifyRequest,
-    response: FastifyReply,
+    response: FastifyReply
   ): boolean {
-    const ifNoneMatch = request.headers['if-none-match'];
-    const ifModifiedSince = request.headers['if-modified-since'];
-    const etag = response.getHeader('ETag') as string;
-    const lastModified = response.getHeader('Last-Modified') as string;
+    const ifNoneMatch = request.headers["if-none-match"];
+    const ifModifiedSince = request.headers["if-modified-since"];
+    const etag = response.getHeader("ETag") as string;
+    const lastModified = response.getHeader("Last-Modified") as string;
 
     // 检查 If-None-Match (ETag 验证)
     if (ifNoneMatch && etag) {
       // 支持多个 ETag 值和 * 通配符
-      const clientETags = ifNoneMatch.split(',').map(tag => tag.trim());
-      if (clientETags.includes('*') || clientETags.includes(etag)) {
+      const clientETags = ifNoneMatch.split(",").map((tag) => tag.trim());
+      if (clientETags.includes("*") || clientETags.includes(etag)) {
         return true; // 内容未修改
       }
     }
@@ -211,7 +215,7 @@ export class CacheInterceptor implements NestInterceptor {
     if (ifModifiedSince && lastModified) {
       const clientDate = new Date(ifModifiedSince);
       const serverDate = new Date(lastModified);
-      
+
       // 如果服务器内容没有在客户端缓存时间之后修改，返回 304
       if (serverDate <= clientDate) {
         return true; // 内容未修改
@@ -223,7 +227,7 @@ export class CacheInterceptor implements NestInterceptor {
 
   /**
    * 生成 ETag
-   * 
+   *
    * 基于响应数据和请求信息生成唯一标识
    */
   private generateETag(data: any, request: FastifyRequest): string {
@@ -237,23 +241,29 @@ export class CacheInterceptor implements NestInterceptor {
     });
 
     // 生成 MD5 哈希作为 ETag
-    const hash = crypto.createHash('md5').update(content).digest('hex');
-    
+    const hash = crypto.createHash("md5").update(content).digest("hex");
+
     // 返回弱 ETag（W/ 前缀表示弱验证）
     return `W/"${hash}"`;
   }
 
   /**
    * 获取最后修改时间
-   * 
+   *
    * 尝试从数据中提取更新时间，否则使用当前时间
    */
   private getLastModified(data: any): Date {
     // 尝试从数据中获取更新时间
-    if (data && typeof data === 'object') {
+    if (data && typeof data === "object") {
       // 检查常见的时间字段
-      const timeFields = ['updated_at', 'updatedAt', 'modified_at', 'modifiedAt', 'last_modified'];
-      
+      const timeFields = [
+        "updated_at",
+        "updatedAt",
+        "modified_at",
+        "modifiedAt",
+        "last_modified",
+      ];
+
       for (const field of timeFields) {
         if (data[field]) {
           const date = new Date(data[field]);
@@ -269,7 +279,7 @@ export class CacheInterceptor implements NestInterceptor {
           const itemDate = this.getLastModified(item);
           return itemDate > latest ? itemDate : latest;
         }, new Date(0));
-        
+
         if (latestDate.getTime() > 0) {
           return latestDate;
         }
@@ -285,17 +295,21 @@ export class CacheInterceptor implements NestInterceptor {
 
 /**
  * 缓存配置装饰器
- * 
+ *
  * 用于在控制器或方法上设置特定的缓存配置
  */
 export function CacheConfig(config: CacheConfig) {
-  return function (target: any, propertyKey?: string, descriptor?: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyKey?: string,
+    descriptor?: PropertyDescriptor
+  ) {
     if (propertyKey) {
       // 方法级别的配置
-      Reflect.defineMetadata('cache-config', config, descriptor.value);
+      Reflect.defineMetadata("cache-config", config, descriptor.value);
     } else {
       // 类级别的配置
-      Reflect.defineMetadata('cache-config', config, target);
+      Reflect.defineMetadata("cache-config", config, target);
     }
   };
 }

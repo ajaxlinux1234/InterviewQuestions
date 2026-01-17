@@ -81,6 +81,8 @@ class SocketService {
     this.isManualDisconnect = false;
 
     console.log("创建新的 Socket 连接...");
+    console.log("Socket URL:", `${SOCKET_URL}/im`);
+    console.log("Token:", token ? token.substring(0, 20) + "..." : "无");
 
     // 创建 Socket 连接
     this.socket = io(`${SOCKET_URL}/im`, {
@@ -88,9 +90,11 @@ class SocketService {
         token,
       },
       transports: ["websocket", "polling"],
-      secure: true,
+      // 根据环境决定是否使用安全连接
+      secure: SOCKET_URL.startsWith("https"),
       rejectUnauthorized: false, // 开发环境忽略自签名证书
       reconnection: false, // 禁用自动重连，我们手动控制
+      timeout: 10000, // 10秒连接超时
     });
 
     // 连接成功
@@ -106,6 +110,9 @@ class SocketService {
     // 连接错误
     this.socket.on("connect_error", (error) => {
       console.error("Socket 连接错误:", error.message);
+      console.error("错误详情:", error);
+      console.error("Socket URL:", `${SOCKET_URL}/im`);
+      console.error("Token 存在:", !!token);
       this.handleReconnect();
     });
 
@@ -122,6 +129,12 @@ class SocketService {
     // 错误事件
     this.socket.on("error", (error: { message: string }) => {
       console.error("Socket 错误:", error.message);
+      console.error("错误详情:", error);
+    });
+
+    // 连接事件（调试用）
+    this.socket.on("connect", () => {
+      console.log("Socket 底层连接成功，等待认证...");
     });
   }
 

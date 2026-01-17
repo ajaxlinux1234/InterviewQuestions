@@ -33,6 +33,7 @@ import {
 import { extname, join } from "path";
 import { v4 as uuidv4 } from "uuid";
 import { promises as fs } from "fs";
+import { CacheConfig, CacheConfigs } from "src/interceptors/cache.interceptor";
 
 /**
  * IM 控制器
@@ -108,6 +109,7 @@ export class ImController {
    * GET /api/im/conversations?page=1&limit=20
    */
   @Get("conversations")
+  @CacheConfig(CacheConfigs.NO_CACHE)
   async getConversations(
     @Request() req,
     @Query() queryDto: QueryConversationsDto
