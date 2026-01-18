@@ -21,6 +21,31 @@ export function MessageInput({ conversationId }: MessageInputProps) {
 
   const { addMessage } = useImStore();
 
+  // 防止移动端键盘弹出时的导航问题
+  useEffect(() => {
+    const handleTouchMove = (e: TouchEvent) => {
+      // 如果输入框获得焦点，阻止页面滚动导致的意外导航
+      if (document.activeElement === textareaRef.current) {
+        e.stopPropagation();
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      // 当页面可见性改变时（比如键盘弹出），确保输入框仍然可用
+      if (document.activeElement === textareaRef.current) {
+        console.log("页面可见性改变，输入框仍然聚焦");
+      }
+    };
+
+    document.addEventListener("touchmove", handleTouchMove, { passive: true });
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   // 自动调整输入框高度
   useEffect(() => {
     if (textareaRef.current) {
@@ -31,6 +56,9 @@ export function MessageInput({ conversationId }: MessageInputProps) {
 
   // 处理输入
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    // 阻止事件冒泡
+    e.stopPropagation();
+
     setContent(e.target.value);
 
     // 发送正在输入状态
@@ -91,10 +119,33 @@ export function MessageInput({ conversationId }: MessageInputProps) {
 
   // 处理键盘事件
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // 阻止事件冒泡，防止触发父组件的事件处理器
+    e.stopPropagation();
+
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  // 处理焦点事件
+  const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    // 阻止事件冒泡，防止触发父组件的事件处理器
+    e.stopPropagation();
+    console.log("输入框获得焦点");
+  };
+
+  // 处理失焦事件
+  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    // 阻止事件冒泡
+    e.stopPropagation();
+    console.log("输入框失去焦点");
+  };
+
+  // 处理点击事件
+  const handleClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
+    // 阻止事件冒泡，防止触发父组件的点击事件
+    e.stopPropagation();
   };
 
   // 处理文件选择
@@ -172,8 +223,18 @@ export function MessageInput({ conversationId }: MessageInputProps) {
   };
 
   return (
-    <div className="bg-white border-t border-gray-200 p-3 md:p-4">
-      <div className="flex items-end space-x-2">
+    <div
+      className="bg-white border-t border-gray-200 p-3 md:p-4"
+      onClick={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+      onTouchEnd={(e) => e.stopPropagation()}
+    >
+      <div
+        className="flex items-end space-x-2"
+        onClick={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+      >
         {/* 工具栏 */}
         <div className="flex items-center space-x-1 md:space-x-2">
           {/* 文件上传按钮 */}
@@ -234,10 +295,24 @@ export function MessageInput({ conversationId }: MessageInputProps) {
           value={content}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
-          onFocus={(e) => e.stopPropagation()}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onClick={handleClick}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
           placeholder="输入消息..."
           className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 md:px-4 md:py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-24 md:max-h-32 text-sm md:text-base"
           rows={1}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
+          data-prevent-navigation="true"
+          style={{
+            WebkitUserSelect: "text",
+            WebkitTouchCallout: "none",
+            WebkitTapHighlightColor: "transparent",
+          }}
         />
 
         {/* 发送按钮 */}

@@ -53,25 +53,54 @@ export function ChatPage() {
 
   // 检测屏幕尺寸变化
   useEffect(() => {
+    let initialViewportHeight = window.innerHeight;
+
     const checkIsMobile = () => {
-      const mobile = window.innerWidth < 768;
+      // 检测是否是键盘弹出导致的高度变化
+      const currentHeight = window.innerHeight;
+      const heightDifference = Math.abs(initialViewportHeight - currentHeight);
+      const isKeyboardEvent = heightDifference > 150; // 键盘通常会改变150px以上的高度
+
+      // 如果是键盘事件，不要重新设置移动端状态
+      if (isKeyboardEvent) {
+        console.log("检测到键盘事件，跳过移动端状态更新");
+        return;
+      }
+
+      // 使用 screen.width 而不是 window.innerWidth 来避免虚拟键盘影响
+      const mobile =
+        window.screen.width < 768 ||
+        (window.innerWidth < 768 && window.innerHeight > 400);
       setIsMobile(mobile);
 
       // 移动端默认显示侧边栏，桌面端显示聊天视图
       if (mobile) {
-        setShowSidebar(true);
-        setShowChatView(false);
+        // 只在初始化时设置，避免键盘弹出时重置状态
+        if (!showSidebar && !showChatView) {
+          setShowSidebar(true);
+          setShowChatView(false);
+        }
       } else {
         setShowSidebar(true);
         setShowChatView(true);
       }
     };
 
-    checkIsMobile();
-    window.addEventListener("resize", checkIsMobile);
+    // 使用防抖来避免频繁的resize事件
+    let resizeTimeout: NodeJS.Timeout;
+    const debouncedCheckIsMobile = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(checkIsMobile, 150);
+    };
 
-    return () => window.removeEventListener("resize", checkIsMobile);
-  }, []);
+    checkIsMobile();
+    window.addEventListener("resize", debouncedCheckIsMobile);
+
+    return () => {
+      window.removeEventListener("resize", debouncedCheckIsMobile);
+      clearTimeout(resizeTimeout);
+    };
+  }, [showSidebar, showChatView]);
 
   const {
     contacts,
