@@ -234,6 +234,7 @@ export function MessageInput({ conversationId }: MessageInputProps) {
           value={content}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
+          onFocus={(e) => e.stopPropagation()}
           placeholder="输入消息..."
           className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 md:px-4 md:py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-24 md:max-h-32 text-sm md:text-base"
           rows={1}
